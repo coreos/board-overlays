@@ -1,0 +1,21 @@
+--- old/include/configs/omap3530beagle.h	2010-02-12 16:22:15.000000000 -0800
++++ new/include/configs/omap3530beagle.h	2010-02-12 16:22:51.000000000 -0800
+@@ -43,7 +43,7 @@
+ #define CONFIG_BEAGLE_REV2	1
+ 
+ /* Enable the below macro if MMC boot support is required */
+-#define CONFIG_MMC	1
++#undef CONFIG_MMC
+ #if defined(CONFIG_MMC)
+ 	#define CFG_CMD_MMC		1
+ 	#define CFG_CMD_FAT		1
+@@ -136,7 +136,7 @@
+  * 0x00300000 - 0x08000000  depends on application
+  */
+ #define NAND_UBOOT_START	0x0080000 /* Leaving first 4 blocks for x-load */
+-#define NAND_UBOOT_END		0x0160000 /* Giving a space of 2 blocks = 256KB */
++#define NAND_UBOOT_END		0x00C0000 /* Giving a space of 2 blocks = 256KB */
+ #define NAND_BLOCK_SIZE		0x20000
+   
+ #define GPMC_CONFIG 		(OMAP34XX_GPMC_BASE+0x50)
+

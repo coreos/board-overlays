@@ -1,0 +1,13 @@
+diff -Naur old/include/configs/omap3_beagle.h new/include/configs/omap3_beagle.h
+--- old/include/configs/omap3_beagle.h	2010-02-16 15:10:16.000000000 -0800
++++ new/include/configs/omap3_beagle.h	2010-02-16 15:10:42.000000000 -0800
+@@ -28,7 +28,7 @@
+ #ifndef __CONFIG_H
+ #define __CONFIG_H
+ 
+-#undef CONFIG_CHROMEOS_FASTBOOT
++#define CONFIG_CHROMEOS_FASTBOOT	1
+ 
+ /*
+  * High Level Configuration Options
+
