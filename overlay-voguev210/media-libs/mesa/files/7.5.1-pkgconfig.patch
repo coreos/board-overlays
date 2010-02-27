@@ -1,0 +1,157 @@
+diff --git a/configure.ac b/configure.ac
+index 910c0b1..e90e7e1 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1227,7 +1227,12 @@ LDFLAGS="$_SAVE_LDFLAGS"
+ CPPFLAGS="$_SAVE_CPPFLAGS"
+ 
+ dnl Substitute the config
+-AC_CONFIG_FILES([configs/autoconf])
++AC_CONFIG_FILES([
++configs/autoconf
++src/glu/glu.pc
++src/mesa/drivers/dri/dri.pc
++src/mesa/gl.pc
++])
+ 
+ dnl Replace the configs/current symlink
+ AC_CONFIG_COMMANDS([configs],[
+diff --git a/src/glu/Makefile b/src/glu/Makefile
+index b268265..9c773d5 100644
+--- a/src/glu/Makefile
++++ b/src/glu/Makefile
+@@ -14,19 +14,6 @@ default: $(TOP)/configs/current
+ 	done
+ 
+ # GLU pkg-config file
+-pcedit = sed \
+-	-e 's,@INSTALL_DIR@,$(INSTALL_DIR),' \
+-	-e 's,@INSTALL_LIB_DIR@,$(INSTALL_LIB_DIR),' \
+-	-e 's,@INSTALL_INC_DIR@,$(INSTALL_INC_DIR),' \
+-	-e 's,@VERSION@,$(MESA_MAJOR).$(MESA_MINOR).$(MESA_TINY),' \
+-	-e 's,@GLU_PC_REQ@,$(GLU_PC_REQ),' \
+-	-e 's,@GLU_PC_REQ_PRIV@,$(GLU_PC_REQ_PRIV),' \
+-	-e 's,@GLU_PC_LIB_PRIV@,$(GLU_PC_LIB_PRIV),' \
+-	-e 's,@GLU_PC_CFLAGS@,$(GLU_PC_CFLAGS),' \
+-	-e 's,@GLU_LIB@,$(GLU_LIB),'
+-glu.pc: glu.pc.in
+-	$(pcedit) $< > $@
+-
+ install: glu.pc
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)
+ 	$(INSTALL) -d $(DESTDIR)$(INSTALL_LIB_DIR)/pkgconfig
+diff --git a/src/glu/glu.pc.in b/src/glu/glu.pc.in
+index f7d9109..19cd4e7 100644
+--- a/src/glu/glu.pc.in
++++ b/src/glu/glu.pc.in
+@@ -1,13 +1,13 @@
+-prefix=@INSTALL_DIR@
+-exec_prefix=${prefix}
+-libdir=@INSTALL_LIB_DIR@
+-includedir=@INSTALL_INC_DIR@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
+ 
+ Name: glu
+ Description: Mesa OpenGL Utility library
+ Requires: @GLU_PC_REQ@
+ Requires.private: @GLU_PC_REQ_PRIV@
+-Version: @VERSION@
+-Libs: -L${libdir} -l@GLU_LIB@
++Version: @PACKAGE_VERSION@
++Libs: -L${libdir} -lGLU
+ Libs.private: @GLU_PC_LIB_PRIV@
+ Cflags: -I${includedir} @GLU_PC_CFLAGS@
+diff --git a/src/mesa/Makefile b/src/mesa/Makefile
+index 6f58ad6..5de755e 100644
+--- a/src/mesa/Makefile
++++ b/src/mesa/Makefile
+@@ -92,19 +92,6 @@ install: default
+ 	done
+ 
+ 
+-gl_pcedit = sed \
+-	-e 's,@INSTALL_DIR@,$(INSTALL_DIR),' \
+-	-e 's,@INSTALL_LIB_DIR@,$(INSTALL_LIB_DIR),' \
+-	-e 's,@INSTALL_INC_DIR@,$(INSTALL_INC_DIR),' \
+-	-e 's,@VERSION@,$(MESA_MAJOR).$(MESA_MINOR).$(MESA_TINY),' \
+-	-e 's,@GL_PC_REQ_PRIV@,$(GL_PC_REQ_PRIV),' \
+-	-e 's,@GL_PC_LIB_PRIV@,$(GL_PC_LIB_PRIV),' \
+-	-e 's,@GL_PC_CFLAGS@,$(GL_PC_CFLAGS),' \
+-	-e 's,@GL_LIB@,$(GL_LIB),'
+-
+-gl.pc: gl.pc.in
+-	$(gl_pcedit) $< > $@
+-
+ osmesa_pcedit = sed \
+ 	-e 's,@INSTALL_DIR@,$(INSTALL_DIR),' \
+ 	-e 's,@INSTALL_LIB_DIR@,$(INSTALL_LIB_DIR),' \
+diff --git a/src/mesa/drivers/dri/Makefile b/src/mesa/drivers/dri/Makefile
+index 32db097..2163080 100644
+--- a/src/mesa/drivers/dri/Makefile
++++ b/src/mesa/drivers/dri/Makefile
+@@ -20,17 +20,6 @@ subdirs:
+ 		fi \
+ 	done
+ 
+-pcedit = sed \
+-	-e 's,@INSTALL_DIR@,$(INSTALL_DIR),' \
+-	-e 's,@INSTALL_LIB_DIR@,$(INSTALL_LIB_DIR),' \
+-	-e 's,@INSTALL_INC_DIR@,$(INSTALL_INC_DIR),' \
+-	-e 's,@VERSION@,$(MESA_MAJOR).$(MESA_MINOR).$(MESA_TINY),' \
+-	-e 's,@DRI_DRIVER_DIR@,$(DRI_DRIVER_SEARCH_DIR),' \
+-	-e 's,@DRI_PC_REQ_PRIV@,$(DRI_PC_REQ_PRIV),'
+-
+-dri.pc: dri.pc.in
+-	$(pcedit) $< > $@
+-
+ 
+ install: dri.pc
+ 	@for dir in $(DRI_DIRS) ; do \
+diff --git a/src/mesa/drivers/dri/dri.pc.in b/src/mesa/drivers/dri/dri.pc.in
+index 695aa6c..d9188f5 100644
+--- a/src/mesa/drivers/dri/dri.pc.in
++++ b/src/mesa/drivers/dri/dri.pc.in
+@@ -1,11 +1,11 @@
+-prefix=@INSTALL_DIR@
+-exec_prefix=${prefix}
+-libdir=@INSTALL_LIB_DIR@
+-includedir=@INSTALL_INC_DIR@
+-dridriverdir=@DRI_DRIVER_DIR@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++dridriverdir=@DRI_DRIVER_INSTALL_DIR@
+ 
+ Name: dri
+ Description: Direct Rendering Infrastructure
+-Version: @VERSION@
++Version: @PACKAGE_VERSION@
+ Requires.private: @DRI_PC_REQ_PRIV@
+ Cflags: -I${includedir}
+diff --git a/src/mesa/gl.pc.in b/src/mesa/gl.pc.in
+index 97b8659..2b2e943 100644
+--- a/src/mesa/gl.pc.in
++++ b/src/mesa/gl.pc.in
+@@ -1,12 +1,12 @@
+-prefix=@INSTALL_DIR@
+-exec_prefix=${prefix}
+-libdir=@INSTALL_LIB_DIR@
+-includedir=@INSTALL_INC_DIR@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
+ 
+ Name: gl
+ Description: Mesa OpenGL library
+ Requires.private: @GL_PC_REQ_PRIV@
+-Version: @VERSION@
+-Libs: -L${libdir} -l@GL_LIB@
++Version: @PACKAGE_VERSION@
++Libs: -L${libdir} -lGL
+ Libs.private: @GL_PC_LIB_PRIV@
+ Cflags: -I${includedir} @GL_PC_CFLAGS@

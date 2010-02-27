@@ -1,0 +1,218 @@
+diff --git a/include/GL/internal/dri_interface.h b/include/GL/internal/dri_interface.h
+index 910c916..ea81ce5 100644
+--- a/include/GL/internal/dri_interface.h
++++ b/include/GL/internal/dri_interface.h
+@@ -79,6 +79,10 @@ typedef struct __DRIbufferRec			__DRIbuffer;
+ typedef struct __DRIdri2ExtensionRec		__DRIdri2Extension;
+ typedef struct __DRIdri2LoaderExtensionRec	__DRIdri2LoaderExtension;
+ typedef struct __DRI2flushExtensionRec	__DRI2flushExtension;
++// PVR ----------------------------------------
++typedef struct __DRIpvrExtensionRec		__DRIpvrExtension;
++typedef struct __DRItexBufferExtensionRecPvr	__DRItexBufferExtensionPvr;
++// PVR ----------------------------------------
+ 
+ /*@}*/
+ 
+@@ -268,6 +272,36 @@ struct __DRI2flushExtensionRec {
+     void (*flush)(__DRIdrawable *drawable);
+ };
+ 
++// PVR + PVR BTT RGB/A FIX  ---------------------------------------
++#define __DRI_TEX_BUFFER_PVR "DRI_TexBufferPvr"
++#define __DRI_TEX_BUFFER_PVR_VERSION 2
++struct __DRItexBufferExtensionRecPvr {
++    __DRIextension base;
++
++    /**
++     * Method to override base texture image with the contents of a
++     * __DRIdrawable. 
++     *
++     * For GLX_EXT_texture_from_pixmap with AIGLX.
++     */
++    void (*setTexBuffer)(__DRIcontext *pDRICtx,
++			 GLint target,
++			 GLint format,
++			 __DRIdrawable *pDraw);
++
++    /**
++     * Method to release base texture image of contents of a
++     * __DRIdrawable. 
++     *
++     * For GLX_EXT_texture_from_pixmap with AIGLX.
++     */
++    void (*releaseTexBuffer)(__DRIcontext *pDRICtx,
++			 GLint target,
++			 GLint format,
++			 __DRIdrawable *pDraw);
++};
++// PVR ---------------------------------------
++
+ 
+ /**
+  * XML document describing the configuration options supported by the
+@@ -538,6 +572,21 @@ struct __DRIcoreExtensionRec {
+     int (*unbindContext)(__DRIcontext *ctx);
+ };
+ 
++
++// PVR ----------------------------------------
++/**
++ * This extension defines the pvr DRI functionality.
++ */
++#define __DRI_PVR "DRI_Pvr"
++#define __DRI_PVR_VERSION 1
++
++struct __DRIpvrExtensionRec {
++    __DRIextension base;
++    void (*copySubBufferPrepare)(__DRIdrawable *drawable,int x,int y,int w,int h);
++
++};
++// PVR ----------------------------------------
++
+ /**
+  * Stored version of some component (i.e., server-side DRI module, kernel-side
+  * DRM, etc.).
+diff --git a/src/glx/x11/dri2_glx.c b/src/glx/x11/dri2_glx.c
+index 89efe3a..30bd727 100644
+--- a/src/glx/x11/dri2_glx.c
++++ b/src/glx/x11/dri2_glx.c
+@@ -209,6 +209,10 @@ dri2CopySubBuffer(__GLXDRIdrawable * pdraw,
+    if (!priv->have_back)
+       return;
+ 
++	// PVR ----------------------------------------
++	if( pdraw->psc->pvr ) 
++		(*pdraw->psc->pvr->copySubBufferPrepare)(pdraw->driDrawable,x,y,width,height);
++	// PVR ----------------------------------------
+    xrect.x = x;
+    xrect.y = priv->height - y - height;
+    xrect.width = width;
+diff --git a/src/glx/x11/dri_common.c b/src/glx/x11/dri_common.c
+index 9c825ad..105dd10 100644
+--- a/src/glx/x11/dri_common.c
++++ b/src/glx/x11/dri_common.c
+@@ -410,8 +410,21 @@ driBindExtensions(__GLXscreenConfigs * psc, int dri2)
+       }
+ #endif
+ 
+-      /* Ignore unknown extensions */
+-   }
++	// PVR ----------------------------------------
++#ifdef __DRI_TEX_BUFFER_PVR
++	if ((strcmp(extensions[i]->name, __DRI_TEX_BUFFER_PVR) == 0) && dri2) {
++	    psc->texBufferPvr = (__DRItexBufferExtensionPvr *) extensions[i];
++	    __glXEnableDirectExtension(psc, "GLX_EXT_texture_from_pixmap");
++	}
++#endif
++
++	if ((strcmp(extensions[i]->name, __DRI_PVR) == 0) && dri2) {
++	    psc->pvr = (__DRIpvrExtension *) extensions[i];
++	}	
++	// PVR ----------------------------------------
++
++	/* Ignore unknown extensions */
++    }
+ }
+ 
+ #endif /* GLX_DIRECT_RENDERING */
+diff --git a/src/glx/x11/glx_pbuffer.c b/src/glx/x11/glx_pbuffer.c
+index 501500a..aea2066 100644
+--- a/src/glx/x11/glx_pbuffer.c
++++ b/src/glx/x11/glx_pbuffer.c
+@@ -214,7 +214,6 @@ determineTextureTarget(const int *attribs, int numAttribs)
+    return target;
+ }
+ 
+-
+ static GLenum
+ determineTextureFormat(const int *attribs, int numAttribs)
+ {
+@@ -723,4 +722,3 @@ GLX_ALIAS_VOID(glXGetSelectedEventSGIX,
+                (Display * dpy, GLXDrawable drawable,
+                 unsigned long *mask), (dpy, drawable, mask),
+                glXGetSelectedEvent)
+-
+diff --git a/src/glx/x11/glxclient.h b/src/glx/x11/glxclient.h
+index 00ee14f..4546419 100644
+--- a/src/glx/x11/glxclient.h
++++ b/src/glx/x11/glxclient.h
+@@ -531,12 +531,20 @@ struct __GLXscreenConfigsRec
+ 
+ #ifdef __DRI_TEX_BUFFER
+    const __DRItexBufferExtension *texBuffer;
++	// PVR ----------------------------------------
++	const __DRItexBufferExtensionPvr *texBufferPvr;
++
++	// PVR ----------------------------------------
+ #endif
+ 
+ #ifdef __DRI2_FLUSH
+    const __DRI2flushExtension *f;
+ #endif
+ 
++	// PVR ----------------------------------------
++    const __DRIpvrExtension *pvr;
++	// PVR ----------------------------------------
++
+ #endif
+ 
+     /**
+diff --git a/src/glx/x11/glxcmds.c b/src/glx/x11/glxcmds.c
+index ea55cc4..98bfa08 100644
+--- a/src/glx/x11/glxcmds.c
++++ b/src/glx/x11/glxcmds.c
+@@ -2762,9 +2762,17 @@ __glXBindTexImageEXT(Display * dpy,
+                                                      pdraw->driDrawable);
+          }
+          else {
+-            (*pdraw->psc->texBuffer->setTexBuffer) (gc->__driContext,
+-                                                    pdraw->textureTarget,
+-                                                    pdraw->driDrawable);
++	// PVR ----------------------------------------
++		if( pdraw->psc->texBufferPvr )
++		    (*pdraw->psc->texBufferPvr->setTexBuffer)(gc->__driContext,
++						   pdraw->textureTarget,
++						   pdraw->textureFormat,
++						   pdraw->driDrawable);
++		else if( pdraw->psc->texBuffer )
++		    (*pdraw->psc->texBuffer->setTexBuffer)(gc->__driContext,
++						   pdraw->textureTarget,
++						   pdraw->driDrawable);
++	// PVR ----------------------------------------
+          }
+       }
+       return;
+@@ -2817,8 +2825,19 @@ __glXReleaseTexImageEXT(Display * dpy, GLXDrawable drawable, int buffer)
+       return;
+ 
+ #ifdef GLX_DIRECT_RENDERING
+-   if (gc->driContext)
+-      return;
++    if (gc->driContext) {
++// PVR ----------------------------------------
++	__GLXDRIdrawable *pdraw = GetGLXDRIDrawable(dpy, drawable, NULL);
++
++	if (pdraw != NULL && pdraw->psc->texBufferPvr)
++	    (*pdraw->psc->texBufferPvr->releaseTexBuffer)(gc->__driContext,
++						   pdraw->textureTarget,
++						   pdraw->textureFormat,
++						   pdraw->driDrawable);
++// PVR ----------------------------------------
++
++	return;
++   }
+ #endif
+ 
+    opcode = __glXSetupForCommand(dpy);
+diff --git a/src/mesa/drivers/dri/common/dri_util.h b/src/mesa/drivers/dri/common/dri_util.h
+index c95a5c8..f8f46a7 100644
+--- a/src/mesa/drivers/dri/common/dri_util.h
++++ b/src/mesa/drivers/dri/common/dri_util.h
+@@ -380,6 +380,7 @@ struct __DRIdrawableRec {
+      * GLX_MESA_swap_control.
+      */
+     unsigned int swap_interval;
++		
+ };
+ 
+ /**
