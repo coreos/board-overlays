@@ -109,6 +109,11 @@ PATCHES=(
 	"${UPSTREAMED_PATCHES[@]}"
 	"${FILESDIR}/01moblin-cache-xkbcomp-output-for-fast-start-up.patch"
 	"${FILESDIR}/02moblin-xserver-1.5.0-bg-none-root.patch"
+	"${FILESDIR}/03moblin-xorg-detect-psb.patch"
+	"${FILESDIR}/04moblin-xserver-no-root-2.patch"
+	"${FILESDIR}/05moblin-xorg-x11-nonroot-vesa.patch"
+	"${FILESDIR}/06moblin-xserver-boottime.patch"
+	"${FILESDIR}/07moblin-use-sloppy-heuristic-first-for-initial-mode.patch"
 	"${FILESDIR}/samsung-xserver-xorg-core-1.6.4.patch"
 	)
 
