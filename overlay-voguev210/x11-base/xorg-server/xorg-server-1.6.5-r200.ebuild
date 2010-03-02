@@ -1,6 +1,6 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-base/xorg-server/xorg-server-1.6.3.901-r2.ebuild,v 1.5 2009/10/11 11:17:55 nixnut Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-base/xorg-server/xorg-server-1.6.5-r1.ebuild,v 1.9 2010/01/18 19:26:00 armin76 Exp $
 
 EAPI="2"
 
@@ -9,17 +9,19 @@ EAPI="2"
 
 inherit x-modular multilib versionator
 
-SRC_URI="${SRC_URI}"
-#	mirror://gentoo/${P}-gentoo-patches-01.tar.bz2
+SRC_URI="${SRC_URI}
+	mirror://gentoo/${P}-gentoo-patches-01.tar.bz2"
 
 OPENGL_DIR="xorg-x11"
 
 DESCRIPTION="X.Org X servers"
-KEYWORDS="~alpha amd64 arm ~hppa ~ia64 ~mips ppc ~ppc64 ~sh ~sparc x86 ~x86-fbsd"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 sh sparc x86 ~x86-fbsd"
 
 IUSE_SERVERS="dmx kdrive xorg"
 IUSE="${IUSE_SERVERS} tslib hal ipv6 minimal nptl sdl"
-RDEPEND="hal? ( sys-apps/hal )
+
+RDEPEND="
+	hal? ( sys-apps/hal )
 	tslib? ( >=x11-libs/tslib-1.0 x11-proto/xcalibrateproto )
 	dev-libs/openssl
 	>=x11-libs/libXfont-1.4.0
@@ -98,19 +100,12 @@ LICENSE="${LICENSE} MIT"
 EPATCH_FORCE="yes"
 EPATCH_SUFFIX="patch"
 
-# Local customizations, unsuitable for upstream
-GENTOO_PATCHES=(
-	"${FILESDIR}/1.4-fpic-libxf86config.patch"
-	"${FILESDIR}/${PV}-0001-dix-append-built-ins-to-the-font-path-in-SetDefaultF.patch"
+# These have been sent upstream
+UPSTREAMED_PATCHES=(
+	"${WORKDIR}/patches/"
 	)
 
-# These have been sent upstream
-#UPSTREAMED_PATCHES=(
-#	"${WORKDIR}/patches/"
-#	)
-
 PATCHES=(
-	"${GENTOO_PATCHES[@]}"
 	"${UPSTREAMED_PATCHES[@]}"
 	"${FILESDIR}/01moblin-cache-xkbcomp-output-for-fast-start-up.patch"
 	"${FILESDIR}/02moblin-xserver-1.5.0-bg-none-root.patch"
@@ -167,7 +162,7 @@ pkg_setup() {
 	fi
 
 	OLD_IMPLEM="$(eselect opengl show)"
-	eselect opengl set --impl-headers ${OPENGL_DIR}
+	eselect opengl set ${OPENGL_DIR}
 }
 
 src_install() {
