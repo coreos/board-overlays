@@ -180,6 +180,9 @@ src_configure() {
 
 	# Deactivate assembly code for pic build
 	myconf="${myconf} $(use_enable !pic asm)"
+ 
+	# Deactivate EGL
+	myconf="${myconf} --disable-egl"
 
 	# --with-driver=dri|xlib|osmesa ; might get changed later to something
 	# else than dri
