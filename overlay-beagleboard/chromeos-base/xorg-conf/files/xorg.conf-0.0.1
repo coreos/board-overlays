@@ -1,0 +1,20 @@
+# Copyright (c) 2009 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+Section "ServerFlags"
+	Option "AutoAddDevices" "false"
+	Option "DontZap" "false"
+EndSection
+
+Section "Screen"
+	Identifier "Default Screen"
+	Device "Configured Video Device"
+	DefaultDepth 16
+EndSection
+
+Section "Device"
+	Identifier "Configured Video Device"
+	Driver "omapfb"
+	Option "fb" "/dev/fb0"
+EndSection
