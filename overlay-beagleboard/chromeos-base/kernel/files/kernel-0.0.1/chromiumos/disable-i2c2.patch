@@ -1,0 +1,29 @@
+diff -Naur a/arch/arm/mach-omap2/mux.c b/arch/arm/mach-omap2/mux.c
+--- a/arch/arm/mach-omap2/mux.c	2010-03-02 14:56:46.000000000 -0800
++++ b/arch/arm/mach-omap2/mux.c	2010-03-02 15:11:53.000000000 -0800
+@@ -266,10 +266,12 @@
+ 		OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
+ MUX_CFG_34XX("J21_34XX_I2C1_SDA", 0x1bc,
+ 		OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
++#if 0 /* Chrome OS */
+ MUX_CFG_34XX("AF15_34XX_I2C2_SCL", 0x1be,
+ 		OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
+ MUX_CFG_34XX("AE15_34XX_I2C2_SDA", 0x1c0,
+ 		OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
++#endif
+ MUX_CFG_34XX("AF14_34XX_I2C3_SCL", 0x1c2,
+ 		OMAP34XX_MUX_MODE0 | OMAP34XX_PIN_INPUT_PULLUP)
+ MUX_CFG_34XX("AG14_34XX_I2C3_SDA", 0x1c4,
+diff -Naur a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
+--- a/arch/arm/mach-omap2/pm34xx.c	2010-03-02 14:55:15.000000000 -0800
++++ b/arch/arm/mach-omap2/pm34xx.c	2010-03-02 15:10:39.000000000 -0800
+@@ -625,7 +625,9 @@
+ 	struct power_state *pwrst, *tmp;
+ 	int ret;
+ 
++#if 0 /* Chrome OS */
+ 	printk(KERN_ERR "Power Management for TI OMAP3.\n");
++#endif
+ 
+ 	/* XXX prcm_setup_regs needs to be before enabling hw
+ 	 * supervised mode for powerdomains */

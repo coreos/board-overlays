@@ -11,4 +11,4 @@ KEYWORDS="arm x86"
 IUSE=""
 
 DEPEND="sys-boot/xloader"
-RDEPEND=""
+RDEPEND="${DEPEND}"

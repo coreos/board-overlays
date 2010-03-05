@@ -1,0 +1,15 @@
+diff -Naur a/board/ti/beagle/beagle.h b/board/ti/beagle/beagle.h
+--- a/board/ti/beagle/beagle.h	2010-03-02 15:22:40.000000000 -0800
++++ b/board/ti/beagle/beagle.h	2010-03-02 15:23:00.000000000 -0800
+@@ -255,8 +255,8 @@
+ 	MUX_VAL(CP(HSUSB0_DATA7),	(IEN  | PTD | DIS | M0)) /*HSUSB0_DATA7*/\
+ 	MUX_VAL(CP(I2C1_SCL),		(IEN  | PTU | EN  | M0)) /*I2C1_SCL*/\
+ 	MUX_VAL(CP(I2C1_SDA),		(IEN  | PTU | EN  | M0)) /*I2C1_SDA*/\
+-	MUX_VAL(CP(I2C2_SCL),		(IEN  | PTU | EN  | M4)) /*GPIO_168*/\
+-	MUX_VAL(CP(I2C2_SDA),		(IEN  | PTU | EN  | M4)) /*GPIO_183*/\
++	MUX_VAL(CP(I2C2_SCL),		(IEN  | PTU | EN  | M0)) /*GPIO_168*/\
++	MUX_VAL(CP(I2C2_SDA),		(IEN  | PTU | EN  | M0)) /*GPIO_183*/\
+ 	MUX_VAL(CP(I2C3_SCL),		(IEN  | PTU | EN  | M0)) /*I2C3_SCL*/\
+ 	MUX_VAL(CP(I2C3_SDA),		(IEN  | PTU | EN  | M0)) /*I2C3_SDA*/\
+ 	MUX_VAL(CP(I2C4_SCL),		(IEN  | PTU | EN  | M0)) /*I2C4_SCL*/\
+

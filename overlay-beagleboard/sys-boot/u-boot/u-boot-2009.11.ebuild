@@ -10,9 +10,9 @@ HOMEPAGE="http://www.denx.de/wiki/U-Boot"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="fastboot"
+IUSE="600mhz fastboot"
 
-DEPEND=""
+DEPEND="chromeos-base/kernel"
 RDEPEND="${DEPEND}"
 
 u_boot=${CHROMEOS_U_BOOT:-"u-boot/files"}
@@ -30,6 +30,10 @@ src_prepare() {
         if use fastboot ; then
 		epatch "${FILESDIR}/${P}-fastboot.patch"
         fi
+	if use 600mhz ; then
+		epatch "${FILESDIR}/${P}-600mhz.patch"
+	fi
+	epatch "${FILESDIR}/${P}-i2c2.patch"
 }
 
 
@@ -54,4 +58,15 @@ src_compile() {
 src_install() {
 	dodir /boot
 	cp -a "${S}"/u-boot.bin "${D}"/boot/ || die
+	"${S}"/tools/mkimage \
+				-A "${ARCH}" \
+				-O linux \
+				-T kernel \
+				-C none \
+				-a 0x80008000 \
+				-e 0x80008000 \
+				-n 'Chrome OS BeagleBoard Kernel' \
+				-d "${ROOT}"/boot/vmlinuz \
+				"${D}"/boot/vmlinux.uimg || die
+	ln -sf "vmlinux.uimg" "${D}"/boot/uImage || die
 }
