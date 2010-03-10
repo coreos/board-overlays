@@ -1,0 +1,20 @@
+# Copyright (c) 2009-2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Setting up things manually here lets us avoid HAL overhead.
+Section "ServerFlags"
+    Option "AutoAddDevices" "false"
+    Option "DontZap" "false"
+EndSection
+
+# TODO: ST1Q specific keyboard and mouse.  Also USB mouse support.
+
+Section "Device"
+    Identifier "MSM"
+    Driver     "msm"
+    Option     "fb"        "/dev/fb0"
+    Option     "DRI2"      "true"
+    Option     "Fastfill"  "false"
+EndSection
+
