@@ -1,0 +1,13 @@
+diff -Naur a/drivers/usb/musb/musb_core.c b/drivers/usb/musb/musb_core.c
+--- a/drivers/usb/musb/musb_core.c	2010-03-12 10:19:50.000000000 -0800
++++ b/drivers/usb/musb/musb_core.c	2010-03-12 10:56:05.000000000 -0800
+@@ -1905,7 +1905,9 @@
+ bad_config:
+ #endif
+ 	default:
++#if 0 /* Silience this for Chrome OS boot for now */
+ 		dev_err(dev, "incompatible Kconfig role setting\n");
++#endif
+ 		return -EINVAL;
+ 	}
+ 

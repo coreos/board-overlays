@@ -1,0 +1,14 @@
+diff -Naur a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
+--- a/arch/arm/mach-omap2/pm34xx.c	2010-03-04 16:06:55.000000000 -0800
++++ b/arch/arm/mach-omap2/pm34xx.c	2010-03-04 16:12:35.000000000 -0800
+@@ -1031,7 +1031,9 @@
+ 	if (!cpu_is_omap34xx())
+ 		return -ENODEV;
+ 
++#if 0 /* Silence this for Chrome OS boot */
+ 	printk(KERN_ERR "Power Management for TI OMAP3.\n");
++#endif
+ 
+ 	/* XXX prcm_setup_regs needs to be before enabling hw
+ 	 * supervised mode for powerdomains */
+
