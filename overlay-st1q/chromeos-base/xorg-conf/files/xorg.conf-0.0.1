@@ -8,7 +8,15 @@ Section "ServerFlags"
     Option "DontZap" "false"
 EndSection
 
-# TODO: ST1Q specific keyboard and mouse.  Also USB mouse support.
+# TODO: ST1Q specific keyboard and mouse.
+
+Section "InputDevice"
+    Identifier "USBMouse"
+    Driver     "mouse"
+    Option     "Device"        "/dev/input/mice"
+    Option     "Protocol"      "IMPS/2"
+    Option     "ZAxisMapping"  "4 5"
+EndSection
 
 Section "Device"
     Identifier "MSM"
