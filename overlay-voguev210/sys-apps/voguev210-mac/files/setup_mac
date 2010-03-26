@@ -1,0 +1,11 @@
+#!/bin/bash
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if [ -z "$1" ] ; then
+  echo "usage: $0 mac-address"
+  exit 1
+fi
+
+uboot-env.py -f /dev/mtdblock0 -o 0x7c000 -s 0x4000 --set ethaddr=$1
