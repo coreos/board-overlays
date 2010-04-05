@@ -18,4 +18,8 @@ src_install() {
     # Install Upstart configuration files.
     insinto /etc/init
     doins "${FILESDIR}"/etc/init/ttyS0.conf
+    
+    DEVICES_DIR="/lib/chromiumos/devices"
+    mknod --mode=0600 "${D}/${DEVICES_DIR}/ttyS0"  c 4 64
+    chown root.tty "${D}/${DEVICES_DIR}"/tty*
 }
