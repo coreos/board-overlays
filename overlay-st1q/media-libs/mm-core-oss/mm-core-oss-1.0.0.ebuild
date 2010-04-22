@@ -3,12 +3,20 @@
 
 EAPI=2
 
-inherit git toolchain-funcs
+if [[ -z "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
+	inherit git
+
+	EGIT_REPO_URI="http://src.chromium.org/git/mm-core.git"
+	EGIT_COMMIT="ad19d464d0bffba3d45cd92c53e196c354dfd823"
+else
+	files="${CHROMEOS_ROOT}/${ST1Q_SOURCES_QUALCOMM}/omx/mm-core"
+fi
+
+inherit toolchain-funcs
 
 DESCRIPTION="omx multi-media core libraries"
-EGIT_REPO_URI="http://src.chromium.org/git/mm-core.git"
-EGIT_COMMIT="ad19d464d0bffba3d45cd92c53e196c354dfd823"
 HOMEPAGE="http://src.chromium.org"
+SRC_URI=""
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
@@ -17,10 +25,15 @@ IUSE=""
 RDEPEND=""
 DEPEND="chromeos-base/kernel-headers"
 
-files="${CHROMEOS_ROOT}/src/third_party/omx/mm-core"
-
 src_unpack() {
-	git_src_unpack
+	if [[ -n "${EGIT_REPO_URI}" ]] ; then
+		git_src_unpack
+	else
+		elog "Using source: ${files}"
+		mkdir -p "${S}"
+		cp -a "${files}"/* "${S}" || die "mm-core copy failed"
+		cd "${S}" || die "cd failed"
+	fi
 }
 
 src_compile() {

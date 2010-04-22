@@ -3,11 +3,18 @@
 
 EAPI=2
 
-inherit git toolchain-funcs
+if [[ -z "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
+	inherit git
+
+	EGIT_REPO_URI="http://src.chromium.org/git/mm-audio.git"
+	EGIT_COMMIT="09a734cb9d10fbb243fe086961445e78d891f5a2"
+else
+	files="${CHROMEOS_ROOT}/${ST1Q_SOURCES_QUALCOMM}/omx/mm-audio"
+fi
+
+inherit toolchain-funcs
 
 DESCRIPTION="omx multi-media audio libraries"
-EGIT_REPO_URI="http://src.chromium.org/git/mm-audio.git"
-EGIT_COMMIT="09a734cb9d10fbb243fe086961445e78d891f5a2"
 HOMEPAGE="http://src.chromium.org"
 SRC_URI=""
 LICENSE="BSD"
@@ -19,10 +26,15 @@ RDEPEND="media-libs/mm-core-oss"
 DEPEND="${RDEPEND}
 	chromeos-base/kernel-headers"
 
-files="${CHROMEOS_ROOT}/src/third_party/omx/mm-audio"
-
 src_unpack() {
-	git_src_unpack
+	if [[ -n "${EGIT_REPO_URI}" ]] ; then
+		git_src_unpack
+	else
+		elog "Using source: ${files}"
+		mkdir -p "${S}"
+		cp -a "${files}"/* "${S}" || die "mm-audio copy failed"
+		cd "${S}" || die "cd failed"
+	fi
 }
 
 src_compile() {
@@ -35,6 +47,6 @@ src_compile() {
 		|| die "mm-audio compile failed"
 }
 
-src_install(){
+src_install() {
 	emake DESTDIR="${D}" LIBVER=${PV} install || die "mm-audio install failed"
 }
