@@ -1,0 +1,923 @@
+From: Jesse Barnes <jbarnes@virtuousgeek.org>
+
+DRI2: add support for new DRI2 protocol requests
+
+From commit 04a54f69a8085ab3fe11a8713bd8b6b16ed1db27
+
+Support the new DRI2 2.2 protocol requests: DRI2SwapBuffers, DRI2GetMSC,
+DRI2WaitMSC, DRI2WaitSBC and DRI2SwapInterval. These requests allow the
+server to support the SGI_video_sync, SGI_swap_interval, and OML_sync_control
+GLX extensions if DDX support is present. The new DDX APIs are documented
+in dri2.h.
+
+Reviewed-by: Kristian Høgsberg <krh@bitplanet.net>
+Reviewed-by: Adam Jackson <ajax@nwnk.net>
+Signed-off-by: Jesse Barnes <jbarnes@virtuousgeek.org>
+
+---
+
+ hw/xfree86/dri2/dri2.c    |  403 +++++++++++++++++++++++++++++++++++++++++++++
+ hw/xfree86/dri2/dri2.h    |  127 ++++++++++++++
+ hw/xfree86/dri2/dri2ext.c |  201 ++++++++++++++++++++++
+ 3 files changed, 721 insertions(+), 10 deletions(-)
+
+
+diff --git a/hw/xfree86/dri2/dri2.c b/hw/xfree86/dri2/dri2.c
+index d15ced1..3db826e 100644
+--- a/hw/xfree86/dri2/dri2.c
++++ b/hw/xfree86/dri2/dri2.c
+@@ -34,10 +34,12 @@
+ #include <xorg-config.h>
+ #endif
+ 
++#include <errno.h>
+ #include <xf86drm.h>
+ #include "xf86Module.h"
+ #include "scrnintstr.h"
+ #include "windowstr.h"
++#include "dixstruct.h"
+ #include "dri2.h"
+ #include "xf86VGAarbiter.h"
+ 
+@@ -56,9 +58,17 @@ typedef struct _DRI2Drawable {
+     int			 height;
+     DRI2BufferPtr	*buffers;
+     int			 bufferCount;
+-    unsigned int	 pendingSequence;
++    unsigned int	 swapsPending;
++    ClientPtr		 blockedClient;
++    int			 swap_interval;
++    CARD64		 swap_count;
++    CARD64		 target_sbc; /* -1 means no SBC wait outstanding */
++    CARD64		 last_swap_target; /* most recently queued swap target */
++    int			 swap_limit; /* for N-buffering */
+ } DRI2DrawableRec, *DRI2DrawablePtr;
+ 
++typedef struct _DRI2Screen *DRI2ScreenPtr;
++
+ typedef struct _DRI2Screen {
+     const char			*driverName;
+     const char			*deviceName;
+@@ -68,9 +78,12 @@ typedef struct _DRI2Screen {
+     DRI2CreateBufferProcPtr	 CreateBuffer;
+     DRI2DestroyBufferProcPtr	 DestroyBuffer;
+     DRI2CopyRegionProcPtr	 CopyRegion;
++    DRI2ScheduleSwapProcPtr	 ScheduleSwap;
++    DRI2GetMSCProcPtr		 GetMSC;
++    DRI2ScheduleWaitMSCProcPtr	 ScheduleWaitMSC;
+ 
+     HandleExposuresProcPtr       HandleExposures;
+-} DRI2ScreenRec, *DRI2ScreenPtr;
++} DRI2ScreenRec;
+ 
+ static DRI2ScreenPtr
+ DRI2GetScreen(ScreenPtr pScreen)
+@@ -84,6 +97,9 @@ DRI2GetDrawable(DrawablePtr pDraw)
+     WindowPtr		  pWin;
+     PixmapPtr		  pPixmap;
+ 
++    if (!pDraw)
++	return NULL;
++
+     if (pDraw->type == DRAWABLE_WINDOW)
+     {
+ 	pWin = (WindowPtr) pDraw;
+@@ -119,6 +135,13 @@ DRI2CreateDrawable(DrawablePtr pDraw)
+     pPriv->height = pDraw->height;
+     pPriv->buffers = NULL;
+     pPriv->bufferCount = 0;
++    pPriv->swapsPending = 0;
++    pPriv->blockedClient = NULL;
++    pPriv->swap_count = 0;
++    pPriv->target_sbc = -1;
++    pPriv->swap_interval = 1;
++    pPriv->last_swap_target = -1;
++    pPriv->swap_limit = 1; /* default to double buffering */
+ 
+     if (pDraw->type == DRAWABLE_WINDOW)
+     {
+@@ -308,6 +331,50 @@ DRI2GetBuffersWithFormat(DrawablePtr pDraw, int *width, int *height,
+ 			  out_count, TRUE);
+ }
+ 
++/*
++ * In the direct rendered case, we throttle the clients that have more
++ * than their share of outstanding swaps (and thus busy buffers) when a
++ * new GetBuffers request is received.  In the AIGLX case, we allow the
++ * client to get the new buffers, but throttle when the next GLX request
++ * comes in (see __glXDRIcontextWait()).
++ */
++Bool
++DRI2ThrottleClient(ClientPtr client, DrawablePtr pDraw)
++{
++    DRI2DrawablePtr pPriv;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL)
++	return FALSE;
++
++    /* Throttle to swap limit */
++    if ((pPriv->swapsPending >= pPriv->swap_limit) &&
++	!pPriv->blockedClient) {
++	ResetCurrentRequest(client);
++	client->sequence--;
++	IgnoreClient(client);
++	pPriv->blockedClient = client;
++	return TRUE;
++    }
++
++    return FALSE;
++}
++
++void
++DRI2BlockClient(ClientPtr client, DrawablePtr pDraw)
++{
++    DRI2DrawablePtr pPriv;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL)
++	return;
++
++    if (pPriv->blockedClient == NULL) {
++	IgnoreClient(client);
++	pPriv->blockedClient = client;
++    }
++}
++
+ int
+ DRI2CopyRegion(DrawablePtr pDraw, RegionPtr pRegion,
+ 	       unsigned int dest, unsigned int src)
+@@ -338,6 +405,324 @@ DRI2CopyRegion(DrawablePtr pDraw, RegionPtr pRegion,
+     return Success;
+ }
+ 
++/* Can this drawable be page flipped? */
++Bool
++DRI2CanFlip(DrawablePtr pDraw)
++{
++    ScreenPtr pScreen = pDraw->pScreen;
++    WindowPtr pWin, pRoot;
++    PixmapPtr pWinPixmap, pRootPixmap;
++
++    if (pDraw->type == DRAWABLE_PIXMAP)
++	return TRUE;
++
++    pRoot = WindowTable[pScreen->myNum];
++    pRootPixmap = pScreen->GetWindowPixmap(pRoot);
++
++    pWin = (WindowPtr) pDraw;
++    pWinPixmap = pScreen->GetWindowPixmap(pWin);
++    if (pRootPixmap != pWinPixmap)
++	return FALSE;
++    if (!REGION_EQUAL(pScreen, &pWin->clipList, &pRoot->winSize))
++	return FALSE;
++
++    return TRUE;
++}
++
++/* Can we do a pixmap exchange instead of a blit? */
++Bool
++DRI2CanExchange(DrawablePtr pDraw)
++{
++    return FALSE;
++}
++
++void
++DRI2WaitMSCComplete(ClientPtr client, DrawablePtr pDraw, int frame,
++		    unsigned int tv_sec, unsigned int tv_usec)
++{
++    DRI2DrawablePtr pPriv;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL)
++	return;
++
++    ProcDRI2WaitMSCReply(client, ((CARD64)tv_sec * 1000000) + tv_usec,
++			 frame, pPriv->swap_count);
++
++    if (pPriv->blockedClient)
++	AttendClient(pPriv->blockedClient);
++
++    pPriv->blockedClient = NULL;
++}
++
++static void
++DRI2WakeClient(ClientPtr client, DrawablePtr pDraw, int frame,
++	       unsigned int tv_sec, unsigned int tv_usec)
++{
++    ScreenPtr	    pScreen = pDraw->pScreen;
++    DRI2DrawablePtr pPriv;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: bad drawable\n", __func__);
++	return;
++    }
++
++    /*
++     * Swap completed.  Either wake up an SBC waiter or a client that was
++     * blocked due to GLX activity during a swap.
++     */
++    if (pPriv->target_sbc != -1 &&
++	pPriv->target_sbc >= pPriv->swap_count) {
++	ProcDRI2WaitMSCReply(client, ((CARD64)tv_sec * 1000000) + tv_usec,
++			     frame, pPriv->swap_count);
++	pPriv->target_sbc = -1;
++
++	AttendClient(pPriv->blockedClient);
++	pPriv->blockedClient = NULL;
++    } else if (pPriv->target_sbc == -1) {
++	if (pPriv->blockedClient)
++	    AttendClient(pPriv->blockedClient);
++	pPriv->blockedClient = NULL;
++    }
++}
++
++void
++DRI2SwapComplete(ClientPtr client, DrawablePtr pDraw, int frame,
++		   unsigned int tv_sec, unsigned int tv_usec, int type,
++		   DRI2SwapEventPtr swap_complete, void *swap_data)
++{
++    ScreenPtr	    pScreen = pDraw->pScreen;
++    DRI2DrawablePtr pPriv;
++    CARD64          ust = 0;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: bad drawable\n", __func__);
++	return;
++    }
++
++    if (pPriv->refCount == 0) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: bad drawable refcount\n", __func__);
++	xfree(pPriv);
++	return;
++    }
++
++    ust = ((CARD64)tv_sec * 1000000) + tv_usec;
++    if (swap_complete)
++	swap_complete(client, swap_data, type, ust, frame, pPriv->swap_count);
++
++    pPriv->swapsPending--;
++    pPriv->swap_count++;
++
++    DRI2WakeClient(client, pDraw, frame, tv_sec, tv_usec);
++}
++
++Bool
++DRI2WaitSwap(ClientPtr client, DrawablePtr pDrawable)
++{
++    DRI2DrawablePtr pPriv = DRI2GetDrawable(pDrawable);
++
++    /* If we're currently waiting for a swap on this drawable, reset
++     * the request and suspend the client.  We only support one
++     * blocked client per drawable. */
++    if ((pPriv->swapsPending) &&
++	pPriv->blockedClient == NULL) {
++	ResetCurrentRequest(client);
++	client->sequence--;
++	DRI2BlockClient(client, pDrawable);
++	return TRUE;
++    }
++
++    return FALSE;
++}
++
++int
++DRI2SwapBuffers(ClientPtr client, DrawablePtr pDraw, CARD64 target_msc,
++		CARD64 divisor, CARD64 remainder, CARD64 *swap_target,
++		DRI2SwapEventPtr func, void *data)
++{
++    ScreenPtr       pScreen = pDraw->pScreen;
++    DRI2ScreenPtr   ds = DRI2GetScreen(pDraw->pScreen);
++    DRI2DrawablePtr pPriv;
++    DRI2BufferPtr   pDestBuffer = NULL, pSrcBuffer = NULL;
++    CARD64          ust;
++    int             ret, i;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: bad drawable\n", __func__);
++	return BadDrawable;
++    }
++
++    for (i = 0; i < pPriv->bufferCount; i++) {
++	if (pPriv->buffers[i]->attachment == DRI2BufferFrontLeft)
++	    pDestBuffer = (DRI2BufferPtr) pPriv->buffers[i];
++	if (pPriv->buffers[i]->attachment == DRI2BufferBackLeft)
++	    pSrcBuffer = (DRI2BufferPtr) pPriv->buffers[i];
++    }
++    if (pSrcBuffer == NULL || pDestBuffer == NULL) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: drawable has no back or front?\n", __func__);
++	return BadDrawable;
++    }
++
++    /* Old DDX, just blit */
++    if (!ds->ScheduleSwap) {
++	BoxRec box;
++	RegionRec region;
++
++	box.x1 = 0;
++	box.y1 = 0;
++	box.x2 = pDraw->width;
++	box.y2 = pDraw->height;
++	REGION_INIT(pScreen, &region, &box, 0);
++
++	pPriv->swapsPending++;
++
++	(*ds->CopyRegion)(pDraw, &region, pDestBuffer, pSrcBuffer);
++	DRI2SwapComplete(client, pDraw, target_msc, 0, 0, DRI2_BLIT_COMPLETE,
++			 func, data);
++	return Success;
++    }
++
++    /*
++     * In the simple glXSwapBuffers case, all params will be 0, and we just
++     * need to schedule a swap for the last swap target + the swap interval.
++     * If the last swap target hasn't been set yet, call into the driver
++     * to get the current count.
++     */
++    if (target_msc == 0 && divisor == 0 && remainder == 0 &&
++	pPriv->last_swap_target < 0) {
++	ret = (*ds->GetMSC)(pDraw, &ust, &target_msc);
++	if (!ret) {
++	    xf86DrvMsg(pScreen->myNum, X_ERROR,
++		       "[DRI2] %s: driver failed to return current MSC\n",
++		       __func__);
++	    return BadDrawable;
++	}
++    }
++
++    /* First swap needs to initialize last_swap_target */
++    if (pPriv->last_swap_target < 0)
++	pPriv->last_swap_target = target_msc;
++
++    /*
++     * Swap target for this swap is last swap target + swap interval since
++     * we have to account for the current swap count, interval, and the
++     * number of pending swaps.
++     */
++    *swap_target = pPriv->last_swap_target + pPriv->swap_interval;
++
++    ret = (*ds->ScheduleSwap)(client, pDraw, pDestBuffer, pSrcBuffer,
++			      swap_target, divisor, remainder, func, data);
++    if (!ret) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: driver failed to schedule swap\n", __func__);
++	return BadDrawable;
++    }
++
++    pPriv->swapsPending++;
++    pPriv->last_swap_target = *swap_target;
++
++    return Success;
++}
++
++void
++DRI2SwapInterval(DrawablePtr pDrawable, int interval)
++{
++    DRI2DrawablePtr pPriv = DRI2GetDrawable(pDrawable);
++
++    /* fixme: check against arbitrary max? */
++
++    pPriv->swap_interval = interval;
++}
++
++int
++DRI2GetMSC(DrawablePtr pDraw, CARD64 *ust, CARD64 *msc, CARD64 *sbc)
++{
++    ScreenPtr pScreen = pDraw->pScreen;
++    DRI2ScreenPtr ds = DRI2GetScreen(pDraw->pScreen);
++    DRI2DrawablePtr pPriv;
++    Bool ret;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL) {
++        xf86DrvMsg(pScreen->myNum, X_ERROR,
++		   "[DRI2] %s: bad drawable\n", __func__);
++	return BadDrawable;
++    }
++
++    if (!ds->GetMSC) {
++	*ust = 0;
++	*msc = 0;
++	*sbc = pPriv->swap_count;
++	return Success;
++    }
++
++    /*
++     * Spec needs to be updated to include unmapped or redirected
++     * drawables
++     */
++
++    ret = (*ds->GetMSC)(pDraw, ust, msc);
++    if (!ret)
++	return BadDrawable;
++
++    *sbc = pPriv->swap_count;
++
++    return Success;
++}
++
++int
++DRI2WaitMSC(ClientPtr client, DrawablePtr pDraw, CARD64 target_msc,
++	    CARD64 divisor, CARD64 remainder)
++{
++    DRI2ScreenPtr ds = DRI2GetScreen(pDraw->pScreen);
++    DRI2DrawablePtr pPriv;
++    Bool ret;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL)
++	return BadDrawable;
++
++    /* Old DDX just completes immediately */
++    if (!ds->ScheduleWaitMSC) {
++	DRI2WaitMSCComplete(client, pDraw, target_msc, 0, 0);
++
++	return Success;
++    }
++
++    ret = (*ds->ScheduleWaitMSC)(client, pDraw, target_msc, divisor, remainder);
++    if (!ret)
++	return BadDrawable;
++
++    return Success;
++}
++
++int
++DRI2WaitSBC(ClientPtr client, DrawablePtr pDraw, CARD64 target_sbc,
++	    CARD64 *ust, CARD64 *msc, CARD64 *sbc)
++{
++    DRI2DrawablePtr pPriv;
++
++    pPriv = DRI2GetDrawable(pDraw);
++    if (pPriv == NULL)
++	return BadDrawable;
++
++    if (pPriv->swap_count >= target_sbc)
++	return Success;
++
++    pPriv->target_sbc = target_sbc;
++    DRI2BlockClient(client, pDraw);
++
++    return Success;
++}
++
+ void
+ DRI2DestroyDrawable(DrawablePtr pDraw)
+ {
+@@ -363,7 +748,11 @@ DRI2DestroyDrawable(DrawablePtr pDraw)
+ 	xfree(pPriv->buffers);
+     }
+ 
+-    xfree(pPriv);
++    /* If the window is destroyed while we have a swap pending, don't
++     * actually free the priv yet.  We'll need it in the DRI2SwapComplete()
++     * callback and we'll free it there once we're done. */
++    if (!pPriv->swapsPending)
++	xfree(pPriv);
+ 
+     if (pDraw->type == DRAWABLE_WINDOW)
+     {
+@@ -421,7 +810,7 @@ DRI2ScreenInit(ScreenPtr pScreen, DRI2InfoPtr info)
+         return FALSE;
+     }
+ 
+-    ds = xalloc(sizeof *ds);
++    ds = xcalloc(1, sizeof *ds);
+     if (!ds)
+ 	return FALSE;
+ 
+@@ -433,6 +822,12 @@ DRI2ScreenInit(ScreenPtr pScreen, DRI2InfoPtr info)
+     ds->DestroyBuffer  = info->DestroyBuffer;
+     ds->CopyRegion     = info->CopyRegion;
+ 
++    if (info->version >= 4) {
++	ds->ScheduleSwap = info->ScheduleSwap;
++	ds->ScheduleWaitMSC = info->ScheduleWaitMSC;
++	ds->GetMSC = info->GetMSC;
++    }
++
+     dixSetPrivate(&pScreen->devPrivates, dri2ScreenPrivateKey, ds);
+ 
+     xf86DrvMsg(pScreen->myNum, X_INFO, "[DRI2] Setup complete\n");
+diff --git a/hw/xfree86/dri2/dri2.h b/hw/xfree86/dri2/dri2.h
+index 175471a..be14b9d 100644
+--- a/hw/xfree86/dri2/dri2.h
++++ b/hw/xfree86/dri2/dri2.h
+@@ -47,6 +47,9 @@ typedef struct {
+ } DRI2BufferRec, *DRI2BufferPtr;
+ 
+ typedef DRI2BufferRec DRI2Buffer2Rec, *DRI2Buffer2Ptr;
++typedef void (*DRI2SwapEventPtr)(ClientPtr client, void *data, int type,
++				 CARD64 ust, CARD64 msc, CARD64 sbc);
++
+ 
+ typedef DRI2BufferPtr	(*DRI2CreateBuffersProcPtr)(DrawablePtr pDraw,
+ 						    unsigned int *attachments,
+@@ -58,20 +61,98 @@ typedef void		(*DRI2CopyRegionProcPtr)(DrawablePtr pDraw,
+ 						 RegionPtr pRegion,
+ 						 DRI2BufferPtr pDestBuffer,
+ 						 DRI2BufferPtr pSrcBuffer);
+-
+ typedef void		(*DRI2WaitProcPtr)(WindowPtr pWin,
+ 					   unsigned int sequence);
+-
++/**
++ * Schedule a buffer swap
++ *
++ * This callback is used to support glXSwapBuffers and the OML_sync_control
++ * extension (see it for a description of the params).
++ *
++ * Drivers should queue an event for the frame count that satisfies the
++ * parameters passed in.  If the event is in the future (i.e. the conditions
++ * aren't currently satisfied), the server may block the client at the next
++ * GLX request using DRI2WaitSwap. When the event arrives, drivers should call
++ * \c DRI2SwapComplete, which will handle waking the client and returning
++ * the appropriate data.
++ *
++ * The DDX is responsible for doing a flip, exchange, or blit of the swap
++ * when the corresponding event arrives.  The \c DRI2CanFlip and
++ * \c DRI2CanExchange functions can be used as helpers for this purpose.
++ *
++ * \param client client pointer (used for block/unblock)
++ * \param pDraw drawable whose count we want
++ * \param pDestBuffer current front buffer
++ * \param pSrcBuffer current back buffer
++ * \param target_msc frame count to wait for
++ * \param divisor divisor for condition equation
++ * \param remainder remainder for division equation
++ * \param func function to call when the swap completes
++ * \param data data for the callback \p func.
++ */
++typedef int		(*DRI2ScheduleSwapProcPtr)(ClientPtr client,
++						   DrawablePtr pDraw,
++						   DRI2BufferPtr pDestBuffer,
++						   DRI2BufferPtr pSrcBuffer,
++						   CARD64 *target_msc,
++						   CARD64 divisor,
++						   CARD64 remainder,
++						   DRI2SwapEventPtr func,
++						   void *data);
+ typedef DRI2BufferPtr	(*DRI2CreateBufferProcPtr)(DrawablePtr pDraw,
+ 						   unsigned int attachment,
+ 						   unsigned int format);
+ typedef void		(*DRI2DestroyBufferProcPtr)(DrawablePtr pDraw,
+ 						    DRI2BufferPtr buffer);
+-
++/**
++ * Get current media stamp counter values
++ *
++ * This callback is used to support the SGI_video_sync and OML_sync_control
++ * extensions.
++ *
++ * Drivers should return the current frame counter and the timestamp from
++ * when the returned frame count was last incremented.
++ *
++ * The count should correspond to the screen where the drawable is currently
++ * visible.  If the drawable isn't visible (e.g. redirected), the server
++ * should return BadDrawable to the client, pending GLX spec updates to
++ * define this behavior.
++ *
++ * \param pDraw drawable whose count we want
++ * \param ust timestamp from when the count was last incremented.
++ * \param mst current frame count
++ */
++typedef int		(*DRI2GetMSCProcPtr)(DrawablePtr pDraw, CARD64 *ust,
++					     CARD64 *msc);
++/**
++ * Schedule a frame count related wait
++ *
++ * This callback is used to support the SGI_video_sync and OML_sync_control
++ * extensions.  See those specifications for details on how to handle
++ * the divisor and remainder parameters.
++ *
++ * Drivers should queue an event for the frame count that satisfies the
++ * parameters passed in.  If the event is in the future (i.e. the conditions
++ * aren't currently satisfied), the driver should block the client using
++ * \c DRI2BlockClient.  When the event arrives, drivers should call
++ * \c DRI2WaitMSCComplete, which will handle waking the client and returning
++ * the appropriate data.
++ *
++ * \param client client pointer (used for block/unblock)
++ * \param pDraw drawable whose count we want
++ * \param target_msc frame count to wait for
++ * \param divisor divisor for condition equation
++ * \param remainder remainder for division equation
++ */
++typedef int		(*DRI2ScheduleWaitMSCProcPtr)(ClientPtr client,
++						      DrawablePtr pDraw,
++						      CARD64 target_msc,
++						      CARD64 divisor,
++						      CARD64 remainder);
+ /**
+  * Version of the DRI2InfoRec structure defined in this header
+  */
+-#define DRI2INFOREC_VERSION 3
++#define DRI2INFOREC_VERSION 4
+ 
+ typedef struct {
+     unsigned int version;	/**< Version of this struct */
+@@ -83,7 +164,9 @@ typedef struct {
+     DRI2DestroyBufferProcPtr	DestroyBuffer;
+     DRI2CopyRegionProcPtr	CopyRegion;
+     DRI2WaitProcPtr		Wait;
+-
++    DRI2ScheduleSwapProcPtr	ScheduleSwap;
++    DRI2GetMSCProcPtr		GetMSC;
++    DRI2ScheduleWaitMSCProcPtr	ScheduleWaitMSC;
+ }  DRI2InfoRec, *DRI2InfoPtr;
+ 
+ extern _X_EXPORT Bool DRI2ScreenInit(ScreenPtr	pScreen,
+@@ -137,4 +220,38 @@ extern _X_EXPORT DRI2BufferPtr *DRI2GetBuffersWithFormat(DrawablePtr pDraw,
+ 	int *width, int *height, unsigned int *attachments, int count,
+ 	int *out_count);
+ 
++extern _X_EXPORT void DRI2SwapInterval(DrawablePtr pDrawable, int interval);
++extern _X_EXPORT int DRI2SwapBuffers(ClientPtr client, DrawablePtr pDrawable,
++				     CARD64 target_msc, CARD64 divisor,
++				     CARD64 remainder, CARD64 *swap_target,
++				     DRI2SwapEventPtr func, void *data);
++extern _X_EXPORT Bool DRI2WaitSwap(ClientPtr client, DrawablePtr pDrawable);
++
++extern _X_EXPORT int DRI2GetMSC(DrawablePtr pDrawable, CARD64 *ust,
++				CARD64 *msc, CARD64 *sbc);
++extern _X_EXPORT int DRI2WaitMSC(ClientPtr client, DrawablePtr pDrawable,
++				 CARD64 target_msc, CARD64 divisor,
++				 CARD64 remainder);
++extern _X_EXPORT int ProcDRI2WaitMSCReply(ClientPtr client, CARD64 ust,
++					  CARD64 msc, CARD64 sbc);
++extern _X_EXPORT int DRI2WaitSBC(ClientPtr client, DrawablePtr pDraw,
++				 CARD64 target_sbc, CARD64 *ust, CARD64 *msc,
++				 CARD64 *sbc);
++extern _X_EXPORT Bool DRI2ThrottleClient(ClientPtr client, DrawablePtr pDraw);
++
++extern _X_EXPORT Bool DRI2CanFlip(DrawablePtr pDraw);
++
++extern _X_EXPORT Bool DRI2CanExchange(DrawablePtr pDraw);
++
++extern _X_EXPORT void DRI2BlockClient(ClientPtr client, DrawablePtr pDraw);
++
++extern _X_EXPORT void DRI2SwapComplete(ClientPtr client, DrawablePtr pDraw,
++				       int frame, unsigned int tv_sec,
++				       unsigned int tv_usec, int type,
++				       DRI2SwapEventPtr swap_complete,
++				       void *swap_data);
++extern _X_EXPORT void DRI2WaitMSCComplete(ClientPtr client, DrawablePtr pDraw,
++					  int frame, unsigned int tv_sec,
++					  unsigned int tv_usec);
++
+ #endif
+diff --git a/hw/xfree86/dri2/dri2ext.c b/hw/xfree86/dri2/dri2ext.c
+index dc07b47..f70f66d 100644
+--- a/hw/xfree86/dri2/dri2ext.c
++++ b/hw/xfree86/dri2/dri2ext.c
+@@ -259,6 +259,9 @@ ProcDRI2GetBuffers(ClientPtr client)
+ 		       &pDrawable, &status))
+ 	return status;
+ 
++    if (DRI2ThrottleClient(client, pDrawable))
++	return client->noClientException;
++
+     attachments = (unsigned int *) &stuff[1];
+     buffers = DRI2GetBuffers(pDrawable, &width, &height,
+ 			     attachments, stuff->count, &count);
+@@ -283,6 +286,9 @@ ProcDRI2GetBuffersWithFormat(ClientPtr client)
+ 		       &pDrawable, &status))
+ 	return status;
+ 
++    if (DRI2ThrottleClient(client, pDrawable))
++	return client->noClientException;
++
+     attachments = (unsigned int *) &stuff[1];
+     buffers = DRI2GetBuffersWithFormat(pDrawable, &width, &height,
+ 				       attachments, stuff->count, &count);
+@@ -329,6 +335,185 @@ ProcDRI2CopyRegion(ClientPtr client)
+     return client->noClientException;
+ }
+ 
++static void
++load_swap_reply(xDRI2SwapBuffersReply *rep, CARD64 sbc)
++{
++    rep->swap_hi = sbc >> 32;
++    rep->swap_lo = sbc & 0xffffffff;
++}
++
++static CARD64
++vals_to_card64(CARD32 lo, CARD32 hi)
++{
++    return (CARD64)hi << 32 | lo;
++}
++
++static int
++ProcDRI2SwapBuffers(ClientPtr client)
++{
++    REQUEST(xDRI2SwapBuffersReq);
++    xDRI2SwapBuffersReply rep;
++    DrawablePtr pDrawable;
++    CARD64 target_msc, divisor, remainder, swap_target;
++    int status;
++
++    REQUEST_SIZE_MATCH(xDRI2SwapBuffersReq);
++
++    if (!validDrawable(client, stuff->drawable,
++		       DixReadAccess | DixWriteAccess, &pDrawable, &status))
++	return status;
++
++    target_msc = vals_to_card64(stuff->target_msc_lo, stuff->target_msc_hi);
++    divisor = vals_to_card64(stuff->divisor_lo, stuff->divisor_hi);
++    remainder = vals_to_card64(stuff->remainder_lo, stuff->remainder_hi);
++
++    status = DRI2SwapBuffers(client, pDrawable, target_msc, divisor, remainder,
++			     &swap_target, NULL, pDrawable);
++    if (status != Success)
++	return BadDrawable;
++
++    rep.type = X_Reply;
++    rep.length = 0;
++    rep.sequenceNumber = client->sequence;
++    load_swap_reply(&rep, swap_target);
++
++    WriteToClient(client, sizeof(xDRI2SwapBuffersReply), &rep);
++
++    return client->noClientException;
++}
++
++static void
++load_msc_reply(xDRI2MSCReply *rep, CARD64 ust, CARD64 msc, CARD64 sbc)
++{
++    rep->ust_hi = ust >> 32;
++    rep->ust_lo = ust & 0xffffffff;
++    rep->msc_hi = msc >> 32;
++    rep->msc_lo = msc & 0xffffffff;
++    rep->sbc_hi = sbc >> 32;
++    rep->sbc_lo = sbc & 0xffffffff;
++}
++
++static int
++ProcDRI2GetMSC(ClientPtr client)
++{
++    REQUEST(xDRI2GetMSCReq);
++    xDRI2MSCReply rep;
++    DrawablePtr pDrawable;
++    CARD64 ust, msc, sbc;
++    int status;
++
++    REQUEST_SIZE_MATCH(xDRI2GetMSCReq);
++
++    if (!validDrawable(client, stuff->drawable, DixReadAccess, &pDrawable,
++		       &status))
++	return status;
++
++    status = DRI2GetMSC(pDrawable, &ust, &msc, &sbc);
++    if (status != Success)
++	return status;
++
++    rep.type = X_Reply;
++    rep.length = 0;
++    rep.sequenceNumber = client->sequence;
++    load_msc_reply(&rep, ust, msc, sbc);
++
++    WriteToClient(client, sizeof(xDRI2MSCReply), &rep);
++
++    return client->noClientException;
++}
++
++static int
++ProcDRI2WaitMSC(ClientPtr client)
++{
++    REQUEST(xDRI2WaitMSCReq);
++    DrawablePtr pDrawable;
++    CARD64 target, divisor, remainder;
++    int status;
++
++    /* FIXME: in restart case, client may be gone at this point */
++
++    REQUEST_SIZE_MATCH(xDRI2WaitMSCReq);
++
++    if (!validDrawable(client, stuff->drawable, DixReadAccess, &pDrawable,
++		       &status))
++	return status;
++
++    target = vals_to_card64(stuff->target_msc_lo, stuff->target_msc_hi);
++    divisor = vals_to_card64(stuff->divisor_lo, stuff->divisor_hi);
++    remainder = vals_to_card64(stuff->remainder_lo, stuff->remainder_hi);
++
++    status = DRI2WaitMSC(client, pDrawable, target, divisor, remainder);
++    if (status != Success)
++	return status;
++
++    return client->noClientException;
++}
++
++int
++ProcDRI2WaitMSCReply(ClientPtr client, CARD64 ust, CARD64 msc, CARD64 sbc)
++{
++    xDRI2MSCReply rep;
++
++    rep.type = X_Reply;
++    rep.length = 0;
++    rep.sequenceNumber = client->sequence;
++    load_msc_reply(&rep, ust, msc, sbc);
++
++    WriteToClient(client, sizeof(xDRI2MSCReply), &rep);
++
++    return client->noClientException;
++}
++
++static int
++ProcDRI2SwapInterval(ClientPtr client)
++{
++    REQUEST(xDRI2SwapIntervalReq);
++    DrawablePtr pDrawable;
++    int status;
++
++    /* FIXME: in restart case, client may be gone at this point */
++
++    REQUEST_SIZE_MATCH(xDRI2SwapIntervalReq);
++
++    if (!validDrawable(client, stuff->drawable, DixReadAccess | DixWriteAccess,
++		       &pDrawable, &status))
++	return status;
++
++    DRI2SwapInterval(pDrawable, stuff->interval);
++
++    return client->noClientException;
++}
++
++static int
++ProcDRI2WaitSBC(ClientPtr client)
++{
++    REQUEST(xDRI2WaitSBCReq);
++    xDRI2MSCReply rep;
++    DrawablePtr pDrawable;
++    CARD64 target, ust, msc, sbc;
++    int status;
++
++    REQUEST_SIZE_MATCH(xDRI2WaitSBCReq);
++
++    if (!validDrawable(client, stuff->drawable, DixReadAccess, &pDrawable,
++		       &status))
++	return status;
++
++    target = vals_to_card64(stuff->target_sbc_lo, stuff->target_sbc_hi);
++    status = DRI2WaitSBC(client, pDrawable, target, &ust, &msc, &sbc);
++    if (status != Success)
++	return status;
++
++    rep.type = X_Reply;
++    rep.length = 0;
++    rep.sequenceNumber = client->sequence;
++    load_msc_reply(&rep, ust, msc, sbc);
++
++    WriteToClient(client, sizeof(xDRI2MSCReply), &rep);
++
++    return client->noClientException;
++}
++
+ static int
+ ProcDRI2Dispatch (ClientPtr client)
+ {
+@@ -357,6 +542,16 @@ ProcDRI2Dispatch (ClientPtr client)
+ 	return ProcDRI2CopyRegion(client);
+     case X_DRI2GetBuffersWithFormat:
+ 	return ProcDRI2GetBuffersWithFormat(client);
++    case X_DRI2SwapBuffers:
++	return ProcDRI2SwapBuffers(client);
++    case X_DRI2GetMSC:
++	return ProcDRI2GetMSC(client);
++    case X_DRI2WaitMSC:
++	return ProcDRI2WaitMSC(client);
++    case X_DRI2WaitSBC:
++	return ProcDRI2WaitSBC(client);
++    case X_DRI2SwapInterval:
++	return ProcDRI2SwapInterval(client);
+     default:
+ 	return BadRequest;
+     }
+@@ -416,6 +611,11 @@ static int DRI2DrawableGone(pointer p, XID id)
+ static void
+ DRI2ExtensionInit(void)
+ {
++    dri2DrawableRes = CreateNewResourceType(DRI2DrawableGone);
++
++    if (!dri2DrawableRes)
++	return;
++
+     dri2Extension = AddExtension(DRI2_NAME,
+ 				 DRI2NumberEvents,
+ 				 DRI2NumberErrors,
+@@ -424,7 +624,6 @@ DRI2ExtensionInit(void)
+ 				 NULL,
+ 				 StandardMinorOpcode);
+ 
+-    dri2DrawableRes = CreateNewResourceType(DRI2DrawableGone);
+ }
+ 
+ extern Bool noDRI2Extension;

@@ -1,0 +1,201 @@
+From: 	Aaron Plattner <aplattner@nvidia.com>
+DRI2: Allow multiple driver names.
+
+From commit f311f2d047120fb816897444d2101465ff5189db
+
+Each driver type (e.g. DRI2DriverDRI or DRI2DriverVDPAU) can have a name in the
+driverNames array in DRI2InfoRec. DRI2Connect returns the name for the driver
+specified by driverType. Also print names of supported drivers in
+DRI2ScreenInit.
+
+Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+Reviewed-by: Kristian Høgsberg <krh@bitplanet.net>
+Signed-off-by: Keith Packard <keithp@keithp.com>
+
+---
+
+ hw/xfree86/dri2/dri2.c    |   44 +++++++++++++++++++++++++++++++++++++-------
+ hw/xfree86/dri2/dri2.h    |   11 +++++++++++
+ hw/xfree86/dri2/dri2ext.c |   24 +++++++++++++++++++++++-
+ 3 files changed, 71 insertions(+), 8 deletions(-)
+
+
+diff --git a/hw/xfree86/dri2/dri2.c b/hw/xfree86/dri2/dri2.c
+index b6a7d1b..3d0fa75 100644
+--- a/hw/xfree86/dri2/dri2.c
++++ b/hw/xfree86/dri2/dri2.c
+@@ -70,7 +70,8 @@ typedef struct _DRI2Drawable {
+ typedef struct _DRI2Screen *DRI2ScreenPtr;
+ 
+ typedef struct _DRI2Screen {
+-    const char			*driverName;
++    unsigned int		 numDrivers;
++    const char			**driverNames;
+     const char			*deviceName;
+     int				 fd;
+     unsigned int		 lastSequence;
+@@ -772,14 +773,12 @@ DRI2Connect(ScreenPtr pScreen, unsigned int driverType, int *fd,
+ {
+     DRI2ScreenPtr ds = DRI2GetScreen(pScreen);
+ 
+-    if (ds == NULL)
+-	return FALSE;
+-
+-    if (driverType != DRI2DriverDRI)
++    if (ds == NULL || driverType >= ds->numDrivers ||
++	    !ds->driverNames[driverType])
+ 	return FALSE;
+ 
+     *fd = ds->fd;
+-    *driverName = ds->driverName;
++    *driverName = ds->driverNames[driverType];
+     *deviceName = ds->deviceName;
+ 
+     return TRUE;
+@@ -800,6 +799,11 @@ Bool
+ DRI2ScreenInit(ScreenPtr pScreen, DRI2InfoPtr info)
+ {
+     DRI2ScreenPtr ds;
++    const char* driverTypeNames[] = {
++	"DRI", /* DRI2DriverDRI */
++	"VDPAU", /* DRI2DriverVDPAU */
++    };
++    unsigned int i;
+ 
+     if (info->version < 3)
+ 	return FALSE;
+@@ -815,7 +819,6 @@ DRI2ScreenInit(ScreenPtr pScreen, DRI2InfoPtr info)
+ 	return FALSE;
+ 
+     ds->fd	       = info->fd;
+-    ds->driverName     = info->driverName;
+     ds->deviceName     = info->deviceName;
+ 
+     ds->CreateBuffer   = info->CreateBuffer;
+@@ -828,9 +831,35 @@ DRI2ScreenInit(ScreenPtr pScreen, DRI2InfoPtr info)
+ 	ds->GetMSC = info->GetMSC;
+     }
+ 
++    if (info->version == 3 || info->numDrivers == 0) {
++	/* Driver too old: use the old-style driverName field */
++	ds->numDrivers = 1;
++	ds->driverNames = xalloc(sizeof(*ds->driverNames));
++	if (!ds->driverNames) {
++	    xfree(ds);
++	    return FALSE;
++	}
++	ds->driverNames[0] = info->driverName;
++    } else {
++	ds->numDrivers = info->numDrivers;
++	ds->driverNames = xalloc(info->numDrivers * sizeof(*ds->driverNames));
++	if (!ds->driverNames) {
++	    xfree(ds);
++	    return FALSE;
++	}
++	memcpy(ds->driverNames, info->driverNames,
++	       info->numDrivers * sizeof(*ds->driverNames));
++    }
++
+     dixSetPrivate(&pScreen->devPrivates, dri2ScreenPrivateKey, ds);
+ 
+     xf86DrvMsg(pScreen->myNum, X_INFO, "[DRI2] Setup complete\n");
++    for (i = 0; i < sizeof(driverTypeNames) / sizeof(driverTypeNames[0]); i++) {
++	if (i < ds->numDrivers && ds->driverNames[i]) {
++	    xf86DrvMsg(pScreen->myNum, X_INFO, "[DRI2]   %s driver: %s\n",
++		       driverTypeNames[i], ds->driverNames[i]);
++	}
++    }
+ 
+     return TRUE;
+ }
+@@ -840,6 +869,7 @@ DRI2CloseScreen(ScreenPtr pScreen)
+ {
+     DRI2ScreenPtr ds = DRI2GetScreen(pScreen);
+ 
++    xfree(ds->driverNames);
+     xfree(ds);
+     dixSetPrivate(&pScreen->devPrivates, dri2ScreenPrivateKey, NULL);
+ }
+diff --git a/hw/xfree86/dri2/dri2.h b/hw/xfree86/dri2/dri2.h
+index be14b9d..1c8626b 100644
+--- a/hw/xfree86/dri2/dri2.h
++++ b/hw/xfree86/dri2/dri2.h
+@@ -164,11 +164,22 @@ typedef struct {
+     DRI2DestroyBufferProcPtr	DestroyBuffer;
+     DRI2CopyRegionProcPtr	CopyRegion;
+     DRI2WaitProcPtr		Wait;
++
++    /* added in version 4 */
++
+     DRI2ScheduleSwapProcPtr	ScheduleSwap;
+     DRI2GetMSCProcPtr		GetMSC;
+     DRI2ScheduleWaitMSCProcPtr	ScheduleWaitMSC;
++
++    /* number of drivers in the driverNames array */
++    unsigned int numDrivers;
++    /* array of driver names, indexed by DRI2Driver* driver types */
++    /* a name of NULL means that driver is not supported */
++    const char * const *driverNames;
+ }  DRI2InfoRec, *DRI2InfoPtr;
+ 
++extern _X_EXPORT int DRI2EventBase;
++
+ extern _X_EXPORT Bool DRI2ScreenInit(ScreenPtr	pScreen,
+ 		    DRI2InfoPtr info);
+ 
+diff --git a/hw/xfree86/dri2/dri2ext.c b/hw/xfree86/dri2/dri2ext.c
+index f70f66d..ea887e4 100644
+--- a/hw/xfree86/dri2/dri2ext.c
++++ b/hw/xfree86/dri2/dri2ext.c
+@@ -348,6 +348,25 @@ vals_to_card64(CARD32 lo, CARD32 hi)
+     return (CARD64)hi << 32 | lo;
+ }
+ 
++static void
++DRI2SwapEvent(ClientPtr client, void *data, int type, CARD64 ust, CARD64 msc,
++	      CARD64 sbc)
++{
++    xDRI2BufferSwapComplete event;
++
++    event.type = DRI2EventBase + DRI2_BufferSwapComplete;
++    event.sequenceNumber = client->sequence;
++    event.event_type = type;
++    event.ust_hi = (CARD64)ust >> 32;
++    event.ust_lo = ust & 0xffffffff;
++    event.msc_hi = (CARD64)msc >> 32;
++    event.msc_lo = msc & 0xffffffff;
++    event.sbc_hi = (CARD64)sbc >> 32;
++    event.sbc_lo = sbc & 0xffffffff;
++
++    WriteEventsToClient(client, 1, (xEvent *)&event);
++}
++
+ static int
+ ProcDRI2SwapBuffers(ClientPtr client)
+ {
+@@ -368,7 +387,7 @@ ProcDRI2SwapBuffers(ClientPtr client)
+     remainder = vals_to_card64(stuff->remainder_lo, stuff->remainder_hi);
+ 
+     status = DRI2SwapBuffers(client, pDrawable, target_msc, divisor, remainder,
+-			     &swap_target, NULL, pDrawable);
++			     &swap_target, DRI2SwapEvent, pDrawable);
+     if (status != Success)
+ 	return BadDrawable;
+ 
+@@ -608,6 +627,8 @@ static int DRI2DrawableGone(pointer p, XID id)
+     return Success;
+ }
+ 
++int DRI2EventBase;
++
+ static void
+ DRI2ExtensionInit(void)
+ {
+@@ -624,6 +645,7 @@ DRI2ExtensionInit(void)
+ 				 NULL,
+ 				 StandardMinorOpcode);
+ 
++    DRI2EventBase = dri2Extension->eventBase;
+ }
+ 
+ extern Bool noDRI2Extension;
