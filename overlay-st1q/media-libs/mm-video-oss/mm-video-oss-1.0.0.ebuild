@@ -7,7 +7,7 @@ if [[ -z "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
 	inherit git
 
 	EGIT_REPO_URI="http://src.chromium.org/git/mm-video.git"
-	EGIT_COMMIT="b40bf673b704683504ee91b6d96ed6875b1c6177"
+	EGIT_COMMIT="a8e0d8cd026f050162c6d360f634edeae96a5a11"
 else
 	files="${CHROMEOS_ROOT}/${ST1Q_SOURCES_QUALCOMM}/omx/mm-video"
 fi
