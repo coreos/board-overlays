@@ -6,7 +6,7 @@ EAPI=2
 inherit eutils git toolchain-funcs
 
 DESCRIPTION="Chrome OS Kernel"
-EGIT_REPO_URI="git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap-2.6.git"
+EGIT_REPO_URI="http://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap-2.6.git"
 EGIT_TREE="58cf2f1425abfd3a449f9fe985e48be2d2555022"
 HOMEPAGE="http://src.chromium.org"
 LICENSE="GPL-2"
