@@ -6,7 +6,7 @@ EAPI=2
 inherit eutils git toolchain-funcs
 
 DESCRIPTION="X-Loader: Initial Program Loader for OMAP-based boards"
-EGIT_REPO_URI="git://gitorious.org/x-load-omap3/mainline.git"
+EGIT_REPO_URI="http://git.gitorious.org/x-load-omap3/mainline.git"
 EGIT_TREE="5eae9fb96b90370c7e11b757e6de3ac0df4dfd51"
 HOMEPAGE="http://www.sakoman.net/cgi-bin/gitweb.cgi?p=x-load-omap3.git"
 LICENSE="GPL-2"
