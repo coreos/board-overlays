@@ -50,4 +50,6 @@ src_compile() {
 
 src_install() {
 	emake DESTDIR="${D}" LIBVER=${PV} install || die "mm-video install failed"
+	insinto /etc/udev/rules.d
+	doins "${FILESDIR}"/62-vdec.rules || die
 }
