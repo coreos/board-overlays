@@ -22,7 +22,8 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-RDEPEND="media-libs/mm-core-oss"
+RDEPEND="media-libs/mm-core-oss
+	virtual/opengles"
 DEPEND="${RDEPEND}
 	chromeos-base/kernel-headers"
 
