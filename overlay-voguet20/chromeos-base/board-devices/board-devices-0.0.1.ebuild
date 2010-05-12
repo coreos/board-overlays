@@ -13,4 +13,5 @@ IUSE="tegradbg"
 DEPEND=""
 RDEPEND="chromeos-base/board-devices-private
 	tegradbg? ( chromeos-base/tegra-debug )
+	net-wireless/ath6002
 	"
