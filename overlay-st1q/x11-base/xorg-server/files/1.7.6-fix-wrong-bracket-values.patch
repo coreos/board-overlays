@@ -1,0 +1,10 @@
+--- Xext/sync.c~	2010-04-23 16:31:12.000000000 -0700
++++ Xext/sync.c	2010-04-23 16:31:40.000000000 -0700
+@@ -930,7 +930,6 @@
+     if (ct == XSyncCounterNeverChanges)
+ 	return;
+ 
+-    if (startOver)
+     {
+ 	XSyncMaxValue(&psci->bracket_greater);
+ 	XSyncMinValue(&psci->bracket_less);
