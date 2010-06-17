@@ -10,7 +10,7 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-DEPEND="sys-apps/uboot-env"
+DEPEND="chromeos-base/uboot-env"
 RDEPEND="${DEPEND}"
 
 src_install() {
