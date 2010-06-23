@@ -11,7 +11,6 @@ KEYWORDS="arm"
 IUSE="X"
 
 RDEPEND="chromeos-base/board-devices-private
-	media-libs/mm-audio-oss
 	media-libs/mm-core-oss
 	media-libs/mm-video-oss
 	sys-boot/qsd-modem"
