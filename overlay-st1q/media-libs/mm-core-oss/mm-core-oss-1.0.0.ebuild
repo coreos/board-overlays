@@ -5,7 +5,7 @@ EAPI=2
 
 unset CHROMEOS_ROOT
 
-CROS_WORKON_COMMIT="bbd54b6d68d92bda63e5232dc88550c2a9ef3c79"
+CROS_WORKON_COMMIT="faaacfe0d98e4b3c01b16803388e3f57160ecfdf"
 
 if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
 	CROS_WORKON_REPO="git://git-1.quicinc.com"
@@ -13,7 +13,7 @@ if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
 	CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-core"
 
 	# EGIT_BRANCH must be set prior to 'inherit git' being used by cros-workon
-	EGIT_BRANCH=${EGIT_BRANCH:="${CROS_WORKON_COMMIT}"}
+	EGIT_BRANCH=chromiumos
 else
 	CROS_WORKON_PROJECT="mm-core.git"
 fi

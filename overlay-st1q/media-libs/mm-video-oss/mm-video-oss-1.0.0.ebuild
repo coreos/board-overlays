@@ -5,12 +5,13 @@ EAPI=2
 
 unset CHROMEOS_ROOT
 
-CROS_WORKON_COMMIT="a8e0d8cd026f050162c6d360f634edeae96a5a11"
+CROS_WORKON_COMMIT="054eab1ec2d1bf52e7ee2f5b1904b9c68da92923"
 
 if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
     CROS_WORKON_REPO="git://git-1.quicinc.com"
     CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-video.git"
     CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-video"
+	EGIT_BRANCH=chromiumos
 else
     CROS_WORKON_PROJECT="mm-video.git"
 fi
