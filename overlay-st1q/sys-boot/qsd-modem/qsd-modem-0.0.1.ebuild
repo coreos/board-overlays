@@ -28,11 +28,11 @@ src_compile() {
 		die "U-Boot tool ${mkappsboot} missing."
 	fi
 
-	"${mkappsboot}" "${image}" appsboot.mbn || die "Failed to create header"
+	"${mkappsboot}" "${image}" "${APPSBOOT}" "${CHROMEOS_U_BOOT_TEXT_BASE}" || die "Failed to create header"
 }
 
 src_install() {
 	insinto /u-boot
 
-	doins appsboot.mbn
+	doins "${APPSBOOT}"
 }
