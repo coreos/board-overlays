@@ -3,7 +3,7 @@
 
 EAPI=2
 
-unset CHROMEOS_ROOT
+CROS_WORKON_SRCROOT="/home/${USER}/trunk/src"
 
 CROS_WORKON_COMMIT="054eab1ec2d1bf52e7ee2f5b1904b9c68da92923"
 
@@ -29,7 +29,7 @@ IUSE=""
 RDEPEND="media-libs/mm-core-oss
 	virtual/opengles"
 DEPEND="${RDEPEND}
-	chromeos-base/kernel-headers"
+	chromeos-base/kernel"
 
 
 src_compile() {

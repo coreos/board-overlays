@@ -27,7 +27,7 @@ KEYWORDS="~arm"
 IUSE=""
 
 RDEPEND=""
-DEPEND="chromeos-base/kernel-headers"
+DEPEND="chromeos-base/kernel"
 
 
 src_compile() {

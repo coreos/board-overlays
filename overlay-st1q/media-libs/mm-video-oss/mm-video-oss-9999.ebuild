@@ -29,7 +29,7 @@ IUSE=""
 RDEPEND="media-libs/mm-core-oss
 	virtual/opengles"
 DEPEND="${RDEPEND}
-	chromeos-base/kernel-headers"
+	chromeos-base/kernel"
 
 
 src_compile() {

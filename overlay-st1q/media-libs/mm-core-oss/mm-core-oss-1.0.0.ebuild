@@ -3,7 +3,7 @@
 
 EAPI=2
 
-unset CHROMEOS_ROOT
+CROS_WORKON_SRCROOT="/home/${USER}/trunk"
 
 CROS_WORKON_COMMIT="faaacfe0d98e4b3c01b16803388e3f57160ecfdf"
 
@@ -29,7 +29,7 @@ KEYWORDS="arm"
 IUSE=""
 
 RDEPEND=""
-DEPEND="chromeos-base/kernel-headers"
+DEPEND="chromeos-base/kernel"
 
 src_compile() {
 	tc-export CC CXX
