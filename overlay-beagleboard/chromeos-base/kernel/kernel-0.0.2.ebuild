@@ -37,6 +37,19 @@ src_compile() {
 	emake ARCH="${ARCH}" CROSS_COMPILE="${CHOST}-"
 }
 
+headers_install() {
+	elog "Installing BeagleBoard headers"
+	emake \
+		ARCH=$(tc-arch-kernel) \
+		CROSS_COMPILE="${CHOST}-" \
+		INSTALL_HDR_PATH="${D}/usr" \
+		headers_install || die
+
+	rm -rf "${D}"/usr/include/sound
+	rm -rf "${D}"/usr/include/scsi
+	rm -rf "${D}"/usr/include/drm
+}
+
 src_install() {
 	elog "Installing BeagleBoard kernel"
 	dodir boot
@@ -57,6 +70,8 @@ src_install() {
 		CROSS_COMPILE="${CHOST}-" \
 		INSTALL_MOD_PATH="${D}" \
 		firmware_install || die
+
+	headers_install
 
 	version=$(ls "${D}"/lib/modules)
 
