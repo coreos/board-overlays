@@ -1,7 +1,55 @@
-This directory contains board specific overlays.
+    This directory contains board and variant overlays.  When a board is
+configured using "setup_board --board <board>" the following overlays are added
+to the make.conf PORTDIR_OVERLAY if they exist:
 
-When a board is configured using setup_board --board <name> any overlay that
-matches overlay-<name> and overlay-<name>-* will be added to that boards
-PORTDIR_OVERLAY variable.  The overlay-<name> directory must contain a
-make.conf and a toolchain.conf.
+    src/overlays/overlay-<board>
+    src/private-overlays/overlay-<board>-private
+
+    When a board is configured using "setup_board --board <board> --variant
+<variant>" or "setup_board --board <board>_<variant>" the following overlays
+are added if they exist:
+
+    src/overlays/overlay-<board>
+    src/overlays/overlay-variant-<board>-<variant>
+    src/private-overlays/overlay-<board>-private
+    src/private-overlays/overlay-variant-<board>-<variant>-private
+
+    If --variant is supplied to setup_board or the <board>_<variant> version
+of --board is supplied to setup_board then the primary variant overlay must
+exist.
+
+    All overlays and variants should contain a make.conf.  If this file exists
+it will be sourced in the order that the overlays and variants are listed above.
+
+    The board and variant names can not have underscores or spaces in them.
+
+
+REPO_NAME and LAYOUT.CONF
+-------------------------
+    All overlays and variants must contain a profiles directory with a
+repo_name file therein.  Overlays and variants should also contain a metadata
+directory with a layout.conf file therein.
+
+    The repo_name file is used to give each overlay or variant a unique name
+that is used by portage to identify said overlay or variant.  
+
+    The layout.conf file specifies the "masters" list.  This is a list of
+repository names (taken from the repo_name files in the overlays).  This list
+is used to dissambiguate the selection of ebuilds.  When two overlays supply
+the same ebuild the overlay who's repo_name is listed later in the masters list
+will be used.  The masters list also effects the way that portage searches for
+eclasses.  By having the repo_name "chromiumos" as the last entry in the
+masters list portage will correctly find the chromiumos specific eclasses.
+
+
+PRIMARY BOARD OVERLAY
+---------------------
+    The overlay-<name> directory is special in that it must exist and must
+contain a make.conf and a toolchain.conf.
+
+    In order to be useful the primary overlay should also contain ebuilds for
+chromeos-base/board-devices and chromeos-base/board-devices-private.  The
+board-devices ebuild is used to override the board-devices ebuild provided by
+the base chromiumos-overlay.  The board-devices-private should be a "null"
+ebuild that is provided so that a private overlay may override it.
 
