@@ -1,0 +1,4 @@
+setenv bootargs=root=/dev/mmcblk0p${PART}
+mmcinfo 0
+ext2load mmc 0:${PART} 0x00000000 boot/vmlinux.uimg
+bootm 0x00000000
