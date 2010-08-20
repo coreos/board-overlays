@@ -9,7 +9,7 @@ DESCRIPTION="QSD Modem header creation"
 HOMEPAGE=""
 LICENSE=""
 SLOT="0"
-KEYWORDS="arm"
+KEYWORDS="~arm"
 IUSE=""
 
 DEPEND="sys-boot/u-boot"
