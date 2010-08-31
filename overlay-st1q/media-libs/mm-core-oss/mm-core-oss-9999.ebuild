@@ -5,7 +5,7 @@ EAPI=2
 
 if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
 	CROS_WORKON_REPO="git://git-1.quicinc.com"
-	CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-core.git"
+	CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-core"
 	CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-core"
 
 	# mainline development branch
