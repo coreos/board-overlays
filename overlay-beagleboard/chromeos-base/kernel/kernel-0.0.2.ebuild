@@ -13,6 +13,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="arm"
 IUSE=""
+PROVIDE="virtual/kernel"
 
 DEPEND=""
 RDEPEND=""
