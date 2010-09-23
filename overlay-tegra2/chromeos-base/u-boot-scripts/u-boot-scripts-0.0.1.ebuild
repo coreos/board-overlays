@@ -12,8 +12,8 @@ IUSE=""
 
 src_compile() {
 	BASE="${FILESDIR}"/boot.scr
-	sed -e 's/\${PART}/3/g' "$BASE" >boot-A.scr || die
-	sed -e 's/\${PART}/5/g' "$BASE" >boot-B.scr || die
+	sed 's/\${KERNEL_PART}/2/g;s/\${ROOT_PART}/3/g' "$BASE" >boot-A.scr || die
+	sed 's/\${KERNEL_PART}/4/g;s/\${ROOT_PART}/5/g' "$BASE" >boot-B.scr || die
 
 	for script in boot-{A,B}.scr; do
 		mkimage -A arm -O linux -T script -C none -a 0 -e 0 \

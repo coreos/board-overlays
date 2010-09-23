@@ -1,4 +1,4 @@
 setenv console console=ttyS0,115200n8
-setenv bootargs ${console} root=/dev/${devname}${PART} rootwait ${platform_extras}
-ext2load ${devtype} 0:${PART} ${loadaddr} boot/vmlinux.uimg
-bootm ${loadaddr}
+setenv kernelpart ${KERNEL_PART}
+setenv rootpart ${ROOT_PART}
+setenv bootargs ${console} ${platform_extras} rootwait
