@@ -3,15 +3,13 @@
 
 EAPI=2
 
-if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
-	CROS_WORKON_REPO="git://git-1.quicinc.com"
+if [[ -n "${PRIVATE_REPO}" ]] ; then
+	CROS_WORKON_REPO="${PRIVATE_REPO}"
 	CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-video"
 	CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-video"
 
-	# mainline development branch
-	CROS_WORKON_COMMIT="chromiumos"
 	# EGIT_BRANCH must be set prior to 'inherit git' being used by cros-workon
-	EGIT_BRANCH=${EGIT_BRANCH:="${CROS_WORKON_COMMIT}"}
+	EGIT_BRANCH="froyo"
 else
     CROS_WORKON_PROJECT="mm-video.git"
 fi
