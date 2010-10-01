@@ -3,19 +3,21 @@
 
 EAPI=2
 
-if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
-	CROS_WORKON_COMMIT="1f8d8f8313ce59ef0da1314893667dafa86fa69a"
-else
+CROS_WORKON_COMMIT="b89949d6e0c41dec0bd6347d593669ce24031465"
+# EGIT_BRANCH must be set prior to 'inherit git' being used by cros-workon
+EGIT_BRANCH="froyo"
+
+if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
 	CROS_WORKON_COMMIT="054eab1ec2d1bf52e7ee2f5b1904b9c68da92923"
+	EGIT_BRANCH="master"
 fi
 
-if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
-    CROS_WORKON_REPO="git://git-1.quicinc.com"
-    CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-video.git"
+if [[ -n "${PRIVATE_REPO}" ]] ; then
+    CROS_WORKON_REPO="${PRIVATE_REPO}"
+    CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-video"
     CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-video"
-	EGIT_BRANCH=chromiumos
 else
-    CROS_WORKON_PROJECT="mm-video.git"
+    CROS_WORKON_PROJECT="mm-video"
 fi
 
 inherit cros-workon toolchain-funcs
