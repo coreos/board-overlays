@@ -11,42 +11,28 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="x86 arm"
 IUSE="-compat_wireless"
+PROVIDE="virtual/kernel"
 
 DEPEND="sys-apps/debianutils"
-RDEPEND="chromeos-base/kernel-headers" # Temporary hack
+RDEPEND="chromeos-base/kernel-headers"
 
 vmlinux_text_base=${CHROMEOS_U_BOOT_VMLINUX_TEXT_BASE:-0x20008000}
 
 # Use a single or split kernel config as specified in the board or variant
-# make.conf overlay. Default to the arch specific split config if an
-# overlay or variant does not set either CHROMEOS_KERNEL_CONFIG or
-# CHROMEOS_KERNEL_SPLITCONFIG. CHROMEOS_KERNEL_CONFIG is set relative
-# to the root of the kernel source tree.
+# make.conf overlay
 
-config=${CHROMEOS_KERNEL_SPLITCONFIG:-"chromeos-qsd8650-st1_5"}
+config=${CHROMEOS_KERNEL_SPLITCONFIG:-"chromeos-qsd8660-st1_5"}
 
-if [[ -n "${ST1Q_SOURCES_QUALCOMM}" ]] ; then
-    CROS_WORKON_REPO="git://git-1.quicinc.com"
-	if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
-		CROS_WORKON_PROJECT="kernel/msm"
-		CROS_WORKON_LOCALNAME="../third_party/qcom/opensource/kernel/8660"
-		EGIT_BRANCH="android-msm-2.6.32"
-	elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
-		CROS_WORKON_PROJECT="chromeos/msm"
-		CROS_WORKON_LOCALNAME="../third_party/qcom/opensource/kernel/8650a"
-		EGIT_BRANCH="msm-2.6.32.9a"
-	fi
-	# tip is stable by default
-	CROS_WORKON_COMMIT="${EGIT_BRANCH}"
-else
-	CROS_WORKON_LOCALNAME="../third_party/kernel-qualcomm"
-	if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
-		CROS_WORKON_COMMIT="d482fa805a7c14e7c97dfbd6d7bcc2550082b697"
-		EGIT_BRANCH="qualcomm-2.6.32"
-	elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
-		CROS_WORKON_COMMIT="2e15509fd572442f213f44743a45f3413368cf3e"
-		EGIT_BRANCH="qualcomm-2.6.32.9"
-	fi
+CROS_WORKON_LOCALNAME="../third_party/kernel-qualcomm"
+if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-st1q-qrdc" ]; then
+	CROS_WORKON_COMMIT="b36398611c948e5651b283b54c5d8ae006efaab3"
+	EGIT_BRANCH="qualcomm-2.6.35"
+elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
+	CROS_WORKON_COMMIT="b36398611c948e5651b283b54c5d8ae006efaab3"
+	EGIT_BRANCH="qualcomm-2.6.35"
+elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
+	CROS_WORKON_COMMIT="2e15509fd572442f213f44743a45f3413368cf3e"
+	EGIT_BRANCH="qualcomm-2.6.32.9"
 fi
 
 # This must be inherited *after* EGIT/CROS_WORKON variables defined
@@ -58,7 +44,7 @@ kernel_arch=${CHROMEOS_KERNEL_ARCH:-"$(tc-arch-kernel)"}
 cross=${CHOST}-
 # Hack for using 64-bit kernel with 32-bit user-space
 if [ "${ARCH}" = "x86" -a "${kernel_arch}" = "x86_64" ]; then
-    cross=${CBUILD}-
+	cross=${CBUILD}-
 fi
 
 src_configure() {
@@ -88,31 +74,6 @@ src_compile() {
 		emake M=chromeos/compat-wireless \
 			ARCH=${kernel_arch} \
 			CROSS_COMPILE="${cross}" || die
-	fi
-}
-
-headers_install() {
-	emake \
-	  ARCH=${kernel_arch} \
-	  CROSS_COMPILE="${cross}" \
-	  INSTALL_HDR_PATH="${D}"/usr \
-	  headers_install || die
-
-	#
-	# These subdirectories are installed by various ebuilds and we don't
-	# want to conflict with them.
-	#
-	rm -rf "${D}"/usr/include/sound
-	rm -rf "${D}"/usr/include/scsi
-	rm -rf "${D}"/usr/include/drm
-
-	#
-	# Double hack, install the Qualcomm drm header anyway, its not included in
-	# libdrm, and is required to build xf86-video-msm.
-	#
-	if [ -r "${S}"/include/drm/kgsl_drm.h ]; then
-		insinto /usr/include/drm
-		doins "${S}"/include/drm/kgsl_drm.h
 	fi
 }
 
@@ -147,8 +108,6 @@ src_install() {
 		CROSS_COMPILE="${cross}" \
 		INSTALL_MOD_PATH="${D}" \
 		firmware_install || die
-
-	headers_install
 
 	if [ "${ARCH}" = "arm" ]; then
 		version=$(ls "${D}"/lib/modules)
