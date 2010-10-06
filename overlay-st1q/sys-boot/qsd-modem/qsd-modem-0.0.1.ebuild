@@ -12,7 +12,7 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-DEPEND="sys-boot/u-boot"
+DEPEND="virtual/u-boot"
 RDEPEND="${DEPEND}"
 
 src_compile() {
