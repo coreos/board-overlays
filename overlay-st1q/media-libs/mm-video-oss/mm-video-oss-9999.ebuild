@@ -27,9 +27,7 @@ IUSE=""
 
 RDEPEND="media-libs/mm-core-oss
 	virtual/opengles"
-DEPEND="${RDEPEND}
-	chromeos-base/kernel"
-
+DEPEND="${RDEPEND}"
 
 src_compile() {
 	tc-export CC CXX

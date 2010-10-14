@@ -32,7 +32,7 @@ KEYWORDS="arm"
 IUSE=""
 
 RDEPEND=""
-DEPEND="chromeos-base/kernel"
+DEPEND=""
 
 src_compile() {
 	tc-export CC CXX

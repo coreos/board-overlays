@@ -9,7 +9,7 @@ DESCRIPTION="Chrome OS Kernel"
 HOMEPAGE="http://src.chromium.org"
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="x86 arm"
+KEYWORDS="~x86 ~arm"
 IUSE="-compat_wireless"
 PROVIDE="virtual/kernel"
 
@@ -24,14 +24,12 @@ vmlinux_text_base=${CHROMEOS_U_BOOT_VMLINUX_TEXT_BASE:-0x20008000}
 config=${CHROMEOS_KERNEL_SPLITCONFIG:-"chromeos-qsd8660-st1_5"}
 
 CROS_WORKON_LOCALNAME="../third_party/kernel-qualcomm"
+CROS_WORKON_PROJECT="kernel"
 if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-st1q-qrdc" ]; then
-	CROS_WORKON_COMMIT="47a883f527282bc7666c7f5bed90aab786396e7a"
 	EGIT_BRANCH="qualcomm-2.6.35"
 elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
-	CROS_WORKON_COMMIT="47a883f527282bc7666c7f5bed90aab786396e7a"
 	EGIT_BRANCH="qualcomm-2.6.35"
 elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
-	CROS_WORKON_COMMIT="2e15509fd572442f213f44743a45f3413368cf3e"
 	EGIT_BRANCH="qualcomm-2.6.32.9"
 fi
 
