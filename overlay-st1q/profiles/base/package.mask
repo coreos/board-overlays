@@ -1,1 +1,2 @@
 >media-libs/mesa-7.8.1-r1
+>=chromeos-base/kernel-0.0.1
