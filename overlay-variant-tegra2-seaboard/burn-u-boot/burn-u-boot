@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Load common constants.  This should be the first executable line.
+# The path to common.sh should be relative to your script's location.
+. "$(dirname "$0")/../../../scripts/common.sh"
+
+bct=bct/default.bct
+bin=bin/bootloader.bin
+cfg=flash.cfg
+odm=0x0d8011
+
+if ! which nvflash ; then
+  error "The nvflash utility was not found.  Run the following command in your"
+  error "chroot: sudo emerge -av nvflash"
+  exit
+fi
+
+sudo nvflash \
+  --bct ${bct} \
+  --setbct \
+  --odmdata ${odm} \
+  --configfile ${cfg} \
+  --create \
+  --bl ${bin} \
+  --go
