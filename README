@@ -44,12 +44,19 @@ masters list portage will correctly find the chromiumos specific eclasses.
 
 PRIMARY BOARD OVERLAY
 ---------------------
-    The overlay-<name> directory is special in that it must exist and must
-contain a make.conf and a toolchain.conf.
+    Each board must have a primary board overlay containing make.conf and a
+toolchain.conf file.
+
+    If src/overlays/overlay-<board> exists, it is used as as the primary board
+overlay. If there is no src/overlays/overlay-<board> but there is a
+src/private-overlays/overlay-<board>-private directory, it is used as the
+primary board overlay.
 
     In order to be useful the primary overlay should also contain ebuilds for
-chromeos-base/board-devices and chromeos-base/board-devices-private.  The
-board-devices ebuild is used to override the board-devices ebuild provided by
-the base chromiumos-overlay.  The board-devices-private should be a "null"
-ebuild that is provided so that a private overlay may override it.
+chromeos-base/board-devices. The board-devices ebuild is used to override the
+board-devices ebuild provided by the base chromiumos-overlay.
 
+    If src/overlays/overlay-<board> is the primary board overlay it should
+also contain a chromeos-base/board-devices-private ebuild. The
+board-devices-private ebuild should be a "null" ebuild that is provided so that
+a private overlay may override it.
