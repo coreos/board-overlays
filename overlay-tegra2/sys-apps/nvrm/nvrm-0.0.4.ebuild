@@ -8,12 +8,16 @@ inherit cros-binary
 DESCRIPTION="NVIDIA binary nvrm daemon and libraries for Tegra2"
 SLOT="0"
 KEYWORDS="arm"
-IUSE=""
+IUSE="tegra-local-bins"
 
 RDEPEND="chromeos-base/chromeos-init"
 DEPEND="${RDEPEND}"
 
-URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
+if use tegra-local-bins; then
+	URI_BASE="file://"
+else
+	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
+fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
 CROS_BINARY_SUM="b0c8cb4258a4c9ac5b04df438dad8216e07e3aa0"
 
