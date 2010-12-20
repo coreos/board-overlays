@@ -3,27 +3,26 @@
 
 EAPI=2
 
-CROS_WORKON_COMMIT="51b71b9b8a057da6d47c77369f87328e2452f603"
+CROS_WORKON_COMMIT="efae68fbd757647d3031320da3eb816d10edc9d2"
 # EGIT_BRANCH must be set prior to 'inherit git' being used by cros-workon
 EGIT_BRANCH="froyo"
 
 if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
-	# st1q
-	CROS_WORKON_COMMIT="faaacfe0d98e4b3c01b16803388e3f57160ecfdf"
+	CROS_WORKON_COMMIT="054eab1ec2d1bf52e7ee2f5b1904b9c68da92923"
 	EGIT_BRANCH="master"
 fi
 
 if [[ -n "${PRIVATE_REPO}" ]] ; then
-	CROS_WORKON_REPO="${PRIVATE_REPO}"
-	CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-core"
-	CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-core"
+    CROS_WORKON_REPO="${PRIVATE_REPO}"
+    CROS_WORKON_PROJECT="platform/vendor/qcom-opensource/omx/mm-video"
+    CROS_WORKON_LOCALNAME="qcom/opensource/omx/mm-video"
 else
-	CROS_WORKON_PROJECT="mm-core"
+    CROS_WORKON_PROJECT="mm-video"
 fi
 
 inherit cros-workon toolchain-funcs
 
-DESCRIPTION="omx multi-media core libraries"
+DESCRIPTION="omx multi-media video libraries"
 HOMEPAGE="http://src.chromium.org"
 SRC_URI=""
 LICENSE="BSD"
@@ -31,8 +30,9 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-RDEPEND=""
-DEPEND=""
+RDEPEND="media-libs/mm-core-oss
+	virtual/opengles"
+DEPEND="${RDEPEND}"
 
 src_compile() {
 	tc-export CC CXX
@@ -41,4 +41,6 @@ src_compile() {
 
 src_install() {
 	emake DESTDIR="${D}" LIBVER=${PV} install || die "emake install failed"
+	insinto /etc/udev/rules.d
+	doins "${FILESDIR}"/62-vdec.rules || die
 }

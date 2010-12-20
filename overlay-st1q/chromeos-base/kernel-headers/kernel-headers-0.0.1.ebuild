@@ -6,11 +6,16 @@ EAPI=2
 EGIT_REPO_URI="http://git.chromium.org/git/kernel.git"
 if [ "${CHROMEOS_KERNEL}" = "kernel-qualcomm" ]; then
 	# Current HEAD of kernel.git qualcomm-2.6.35 branch.
-	EGIT_COMMIT="47a883f527282bc7666c7f5bed90aab786396e7a"
+	EGIT_COMMIT="579a8cea41021d78a77fba6f83d29e5d57d371ab"
 	EGIT_BRANCH="qualcomm-2.6.35"
 else
 	# Current HEAD of kernel.git master branch.
 	EGIT_COMMIT="d4e4d17a56d83874d66b4ca3efeaaa4c0d97c338"
+fi
+
+if [[ -n "${PRIVATE_REPO}" ]] ; then
+	EGIT_REPO_URI="${PRIVATE_REPO}/kernel/msm"
+	EGIT_BRANCH="android-msm-2.6.35"
 fi
 
 inherit git
@@ -21,6 +26,26 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="x86 arm"
 IUSE=""
+
+src_unpack() {
+	# path points to CROS_WORKON_LOCALNAME for chromeos-kernel-st1q
+	if [[ -n "${PRIVATE_REPO}" ]] ; then
+		path="${CROS_WORKON_SRCROOT}/src/third_party/kernel-qualcomm"
+	else
+		path="${CROS_WORKON_SRCROOT}/src/third_party/qcom/opensource/kernel/8660"
+	fi
+
+	if [ -d "${path}/.git" ]; then
+		git clone -sn "${path}" "${S}" || die "Can't clone ${path}."
+		if ! ( cd "${S}" && git checkout ${EGIT_COMMIT} ) ; then
+			ewarn "Cannot run git checkout ${EGIT_COMMIT} in ${S}."
+			ewarn "Is ${path} up to date? Try running repo sync."
+			die "Cannot run git checkout ${EGIT_COMMIT} in ${S}."
+		fi
+	else
+		git_src_unpack
+	fi
+}
 
 src_compile() {
 	elog " Nothing to compile"
