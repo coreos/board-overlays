@@ -11,7 +11,9 @@ KEYWORDS="arm"
 IUSE="tegra-local-bins"
 
 DEPEND=""
-RDEPEND="sys-apps/nvrm"
+RDEPEND="sys-apps/nvrm
+        >=x11-base/xorg-server-1.6
+        <x11-base/xorg-server-1.7"
 
 if use tegra-local-bins; then
 	URI_BASE="file://"
