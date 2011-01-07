@@ -6,14 +6,15 @@ EAPI=2
 inherit toolchain-funcs
 
 DESCRIPTION="Chrome OS Kernel"
-HOMEPAGE="http://src.chromium.org"
+HOMEPAGE="https://www.codeaurora.org"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~arm"
-IUSE="-compat_wireless"
+IUSE="-compat_wireless -initramfs"
 PROVIDE="virtual/kernel"
 
-DEPEND="sys-apps/debianutils"
+DEPEND="sys-apps/debianutils
+  initramfs? ( chromeos-base/chromeos-initramfs )"
 RDEPEND="chromeos-base/kernel-headers"
 
 vmlinux_text_base=${CHROMEOS_U_BOOT_VMLINUX_TEXT_BASE:-0x20008000}
@@ -23,14 +24,22 @@ vmlinux_text_base=${CHROMEOS_U_BOOT_VMLINUX_TEXT_BASE:-0x20008000}
 
 config=${CHROMEOS_KERNEL_SPLITCONFIG:-"chromeos-qsd8660-st1_5"}
 
+CROS_WORKON_REPO="git://codeaurora.org/quic/chrome"
 CROS_WORKON_LOCALNAME="../third_party/kernel-qualcomm"
 CROS_WORKON_PROJECT="kernel"
 if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-st1q-qrdc" ]; then
-	EGIT_BRANCH="qualcomm-2.6.35"
+	EGIT_BRANCH="cros/qualcomm-2.6.35"
 elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
-	EGIT_BRANCH="qualcomm-2.6.35"
+	EGIT_BRANCH="cros/qualcomm-2.6.35"
 elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
-	EGIT_BRANCH="qualcomm-2.6.32.9"
+	EGIT_BRANCH="cros/qualcomm-2.6.32.9"
+fi
+
+if [[ -n "${PRIVATE_REPO}" ]] ; then
+	CROS_WORKON_REPO="${PRIVATE_REPO}"
+	CROS_WORKON_PROJECT="kernel/msm"
+	CROS_WORKON_LOCALNAME="../third_party/qcom/opensource/kernel/8660"
+	EGIT_BRANCH="android-msm-2.6.35"
 fi
 
 # This must be inherited *after* EGIT/CROS_WORKON variables defined
@@ -63,7 +72,14 @@ src_configure() {
 }
 
 src_compile() {
+	if use initramfs; then
+		INITRAMFS="CONFIG_INITRAMFS_SOURCE=${ROOT}/usr/bin/initramfs.cpio.gz"
+	else
+		INITRAMFS=""
+	fi
+
 	emake \
+		$INITRAMFS \
 		ARCH=${kernel_arch} \
 		CROSS_COMPILE="${cross}" || die
 

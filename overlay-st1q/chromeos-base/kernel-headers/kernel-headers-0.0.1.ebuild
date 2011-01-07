@@ -3,11 +3,11 @@
 
 EAPI=2
 
-EGIT_REPO_URI="http://git.chromium.org/git/kernel.git"
+EGIT_REPO_URI="git://codeaurora.org/quic/chrome/kernel.git"
 if [ "${CHROMEOS_KERNEL}" = "kernel-qualcomm" ]; then
 	# Current HEAD of kernel.git qualcomm-2.6.35 branch.
 	EGIT_COMMIT="579a8cea41021d78a77fba6f83d29e5d57d371ab"
-	EGIT_BRANCH="qualcomm-2.6.35"
+	EGIT_BRANCH="cros/qualcomm-2.6.35"
 else
 	# Current HEAD of kernel.git master branch.
 	EGIT_COMMIT="d4e4d17a56d83874d66b4ca3efeaaa4c0d97c338"
@@ -30,9 +30,9 @@ IUSE=""
 src_unpack() {
 	# path points to CROS_WORKON_LOCALNAME for chromeos-kernel-st1q
 	if [[ -n "${PRIVATE_REPO}" ]] ; then
-		path="${CROS_WORKON_SRCROOT}/src/third_party/kernel-qualcomm"
-	else
 		path="${CROS_WORKON_SRCROOT}/src/third_party/qcom/opensource/kernel/8660"
+	else
+		path="${CROS_WORKON_SRCROOT}/src/third_party/kernel-qualcomm"
 	fi
 
 	if [ -d "${path}/.git" ]; then

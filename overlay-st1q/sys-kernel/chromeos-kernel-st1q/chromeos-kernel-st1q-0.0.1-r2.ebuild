@@ -6,7 +6,7 @@ EAPI=2
 inherit toolchain-funcs
 
 DESCRIPTION="Chrome OS Kernel"
-HOMEPAGE="http://src.chromium.org"
+HOMEPAGE="https://www.codeaurora.org"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="x86 arm"
@@ -24,17 +24,18 @@ vmlinux_text_base=${CHROMEOS_U_BOOT_VMLINUX_TEXT_BASE:-0x20008000}
 
 config=${CHROMEOS_KERNEL_SPLITCONFIG:-"chromeos-qsd8660-st1_5"}
 
+CROS_WORKON_REPO="git://codeaurora.org/quic/chrome"
 CROS_WORKON_LOCALNAME="../third_party/kernel-qualcomm"
 CROS_WORKON_PROJECT="kernel"
 if [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-st1q-qrdc" ]; then
 	CROS_WORKON_COMMIT="579a8cea41021d78a77fba6f83d29e5d57d371ab"
-	EGIT_BRANCH="qualcomm-2.6.35"
+	EGIT_BRANCH="cros/qualcomm-2.6.35"
 elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8660-st1_5" ]; then
 	CROS_WORKON_COMMIT="579a8cea41021d78a77fba6f83d29e5d57d371ab"
-	EGIT_BRANCH="qualcomm-2.6.35"
+	EGIT_BRANCH="cros/qualcomm-2.6.35"
 elif [ "${CHROMEOS_KERNEL_SPLITCONFIG}" = "chromeos-qsd8650a-st1_5" ]; then
 	CROS_WORKON_COMMIT="2e15509fd572442f213f44743a45f3413368cf3e"
-	EGIT_BRANCH="qualcomm-2.6.32.9"
+	EGIT_BRANCH="cros/qualcomm-2.6.32.9"
 fi
 
 if [[ -n "${PRIVATE_REPO}" ]] ; then
