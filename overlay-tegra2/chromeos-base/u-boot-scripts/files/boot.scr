@@ -1,4 +1,4 @@
 setenv console console=ttyS0,115200n8
 setenv kernelpart ${KERNEL_PART}
 setenv rootpart ${ROOT_PART}
-setenv bootargs ${console} ${platform_extras} rootwait
+setenv bootargs ${console} ${platform_extras}
