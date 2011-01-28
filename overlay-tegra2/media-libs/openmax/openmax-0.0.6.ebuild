@@ -5,14 +5,14 @@ EAPI=2
 
 inherit cros-binary
 
-DESCRIPTION="NVIDIA binary OpenGL|ES libraries for Tegra2"
+DESCRIPTION="OpenMAX binary libraries"
 SLOT="0"
 KEYWORDS="arm"
 IUSE="tegra-local-bins"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-	x11-drivers/opengles-headers"
+	x11-drivers/opengles"
 
 if use tegra-local-bins; then
 	URI_BASE="file://"
@@ -20,4 +20,4 @@ else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="ed568a63ac6755c0a6aeedb2e7e43c990144c9c5"
+CROS_BINARY_SUM="729a139e50aa19711a69f47fa4b189ddd4b4a06a"

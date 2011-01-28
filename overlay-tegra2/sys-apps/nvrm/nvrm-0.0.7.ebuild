@@ -19,7 +19,7 @@ else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="8687306b4d9bae432413a8743c28c834d2d0c8f1"
+CROS_BINARY_SUM="4e7f3612af62b22e3adf993cdd99afd18cbea6f8"
 
 src_install() {
 	insinto /etc/init
