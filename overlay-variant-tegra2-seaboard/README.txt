@@ -25,5 +25,4 @@ These jumpers are also available on the keyboard.
 
 Once in recovery mode run the following from inside the chroot:
 
-cd burn-u-boot
-./burn-u-boot
+~/trunk/src/scripts/bin/write-tegra-bios --board tegra2_seaboard
