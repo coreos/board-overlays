@@ -8,7 +8,7 @@ DESCRIPTION="Tegra2 (meta package)"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="tegradbg ath6002 tegra2-ldk"
+IUSE="tegradbg ath6002 opengles tegra2-ldk"
 
 DEPEND=""
 RDEPEND="chromeos-base/board-devices-private
