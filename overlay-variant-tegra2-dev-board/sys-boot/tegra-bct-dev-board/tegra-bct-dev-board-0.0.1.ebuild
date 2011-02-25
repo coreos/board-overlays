@@ -3,23 +3,20 @@
 
 EAPI=2
 
-inherit toolchain-funcs
+inherit tegra-bct
 
 DESCRIPTION="Dev-Board BCT file"
 LICENSE=""
 SLOT="0"
 KEYWORDS="arm"
-IUSE=""
+IUSE="bootflash-nand"
 PROVIDE="virtual/tegra-bct"
 
 RDEPEND=""
 DEPEND=""
 
-BCT="harmony_a02_12Mhz_H5PS1G83EFR-S5C_333Mhz_1GB_2K8Nand_HY27UF084G2B-TP.bct"
+TEGRA_BCT_FILE="harmony_a02_12Mhz_H5PS1G83EFR-S5C_333Mhz_1GB_2K8Nand_HY27UF084G2B-TP.bct"
 
-src_install() {
-	dodir /u-boot
-	insinto /u-boot
-
-	newins "${FILESDIR}/${BCT}" "board.bct"
-}
+if use "bootflash-nand"; then
+  TEGRA_BCT_FLASH_CONFIG="nand.cfg"
+fi
