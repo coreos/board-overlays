@@ -20,4 +20,4 @@ else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="77f510285646b93c064513919a47e19563afbe5b"
+CROS_BINARY_SUM="84e1833a8ae41282a6bf5612c5a98b3268c0cb4a"
