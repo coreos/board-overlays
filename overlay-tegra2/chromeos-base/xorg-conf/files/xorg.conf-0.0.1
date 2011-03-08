@@ -333,6 +333,23 @@ EndSection
 #    Option	"SendCoreEvents"
 # EndSection
 
+Section "InputDevice"
+Identifier "mxt_touch"
+    Driver "evdev"
+    Option "SendCoreEvents" "false"
+    Option "GrabDevice" "true"
+    Option "Device" "/dev/input/mxt_touch"
+    Option "Calibration" "346 -2 -24 757"
+# Numbers generated via xinput_calibrator
+# Option "Calibration" "min-x max-x min-y max-y"
+# Calibrates the X and Y axes for devices that need to scale to a different
+# coordinate system than reported to the X server. This feature is required for
+# devices that need to scale to a different coordinate system than originally
+# reported by the kernel (e.g. touchscreens). The scaling to the custom
+# coordinate system is done in-driver and the X server is unaware of the
+# transformation.
+EndSection
+
 # **********************************************************************
 # Monitor section
 # **********************************************************************
@@ -519,6 +536,7 @@ Section "ServerLayout"
     Screen	"Screen Internal"
     InputDevice	"Mouse1" "CorePointer"
     InputDevice "Keyboard1" "CoreKeyboard"
+    InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
@@ -526,6 +544,7 @@ Section "ServerLayout"
     Screen	"Screen HDMI"
     InputDevice	"Mouse1" "CorePointer"
     InputDevice "Keyboard1" "CoreKeyboard"
+    InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
@@ -534,6 +553,7 @@ Section "ServerLayout"
     Screen	"Screen HDMI" RightOf "Screen Internal"
     InputDevice	"Mouse1" "CorePointer"
     InputDevice "Keyboard1" "CoreKeyboard"
+    InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
@@ -541,4 +561,5 @@ Section "ServerLayout"
     Screen	"Screen Mirror"
     InputDevice	"Mouse1" "CorePointer"
     InputDevice "Keyboard1" "CoreKeyboard"
+    InputDevice	"mxt_touch"
 EndSection
