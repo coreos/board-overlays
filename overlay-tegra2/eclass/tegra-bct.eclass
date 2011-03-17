@@ -11,6 +11,11 @@
 # BCT file to install
 : ${TEGRA_BCT_FILE:=}
 
+# @ECLASS-VARIABLE: TEGRA_BCT_SDRAM_CONFIG
+# @DESCRIPTION:
+# SDRAM memory timing configuration file to install
+: ${TEGRA_BCT_SDRAM_CONFIG:=}
+
 # @ECLASS-VARIABLE: TEGRA_BCT_FLASH_CONFIG
 # @DESCRIPTION:
 # Flash memory configuration file to install
@@ -25,16 +30,39 @@ case "${EAPI:-0}" in
 esac
 
 tegra-bct_src_configure() {
+	local sdram_file=${FILESDIR}/${TEGRA_BCT_SDRAM_CONFIG}
+	local flash_file=${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}
+
 	if [ -z "${TEGRA_BCT_FILE}" ]; then
 		die "No BCT file selected."
+	fi
+
+	if [ -z "${TEGRA_BCT_SDRAM_CONFIG}" ]; then
+		die "No SDRAM configuration file selected."
 	fi
 
 	if [ -z "${TEGRA_BCT_FLASH_CONFIG}" ]; then
 		die "No flash configuration file selected."
 	fi
+
+	einfo "Using sdram config file: ${sdram_file}"
+	einfo "Using flash config file: ${flash_file}"
+
+	cat ${flash_file} > board.cfg ||
+		die "Failed to read flash config file."
+
+	cat ${sdram_file} >> board.cfg ||
+		die "Failed to read SDRAM config file."
+}
+
+tegra-bct_src_compile() {
+	cbootimage -gbct board.cfg board.bct || die "Failed to generate BCT."
 }
 
 tegra-bct_src_install() {
+	local sdram_file=${FILESDIR}/${TEGRA_BCT_SDRAM_CONFIG}
+	local flash_file=${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}
+
 	dodir /u-boot
 	insinto /u-boot
 
@@ -43,6 +71,18 @@ tegra-bct_src_install() {
 
 	newins "${FILESDIR}/${TEGRA_BCT_FILE}" "board.bct"
 	newins "${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}" "flash.cfg"
+
+	dodir /u-boot/bct
+	insinto /u-boot/bct
+
+	doins "${sdram_file}"
+	dosym "$(basename ${sdram_file})" /u-boot/bct/sdram.cfg
+
+	doins "${flash_file}"
+	dosym "$(basename ${flash_file})" /u-boot/bct/flash.cfg
+
+	doins board.cfg
+	doins board.bct
 }
 
-EXPORT_FUNCTIONS src_configure src_install
+EXPORT_FUNCTIONS src_configure src_compile src_install
