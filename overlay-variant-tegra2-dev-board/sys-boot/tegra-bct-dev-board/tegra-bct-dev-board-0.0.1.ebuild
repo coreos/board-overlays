@@ -15,7 +15,6 @@ PROVIDE="virtual/tegra-bct"
 RDEPEND=""
 DEPEND=""
 
-TEGRA_BCT_FILE="harmony_a02_12Mhz_H5PS1G83EFR-S5C_333Mhz_1GB_2K8Nand_HY27UF084G2B-TP.bct"
 TEGRA_BCT_SDRAM_CONFIG="sdram.cfg"
 
 if use "bootflash-nand"; then

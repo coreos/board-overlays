@@ -6,11 +6,6 @@
 # Purpose: Install Tegra BCT files for firmware construction.
 #
 
-# @ECLASS-VARIABLE: TEGRA_BCT_FILE
-# @DESCRIPTION:
-# BCT file to install
-: ${TEGRA_BCT_FILE:=}
-
 # @ECLASS-VARIABLE: TEGRA_BCT_SDRAM_CONFIG
 # @DESCRIPTION:
 # SDRAM memory timing configuration file to install
@@ -32,10 +27,6 @@ esac
 tegra-bct_src_configure() {
 	local sdram_file=${FILESDIR}/${TEGRA_BCT_SDRAM_CONFIG}
 	local flash_file=${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}
-
-	if [ -z "${TEGRA_BCT_FILE}" ]; then
-		die "No BCT file selected."
-	fi
 
 	if [ -z "${TEGRA_BCT_SDRAM_CONFIG}" ]; then
 		die "No SDRAM configuration file selected."
@@ -62,15 +53,6 @@ tegra-bct_src_compile() {
 tegra-bct_src_install() {
 	local sdram_file=${FILESDIR}/${TEGRA_BCT_SDRAM_CONFIG}
 	local flash_file=${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}
-
-	dodir /u-boot
-	insinto /u-boot
-
-	einfo "Using ${TEGRA_BCT_FILE}"
-	einfo "Using ${TEGRA_BCT_FLASH_CONFIG}"
-
-	newins "${FILESDIR}/${TEGRA_BCT_FILE}" "board.bct"
-	newins "${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}" "flash.cfg"
 
 	dodir /u-boot/bct
 	insinto /u-boot/bct
