@@ -13,4 +13,6 @@ IUSE=""
 src_install() {
 	insinto /etc/udev/rules.d
 	doins ${FILESDIR}/99-atmel-touch.rules
+	insinto /etc
+	doins ${FILESDIR}/touch-devices
 }
