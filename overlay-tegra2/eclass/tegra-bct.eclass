@@ -58,10 +58,15 @@ tegra-bct_src_install() {
 	insinto /u-boot/bct
 
 	doins "${sdram_file}"
-	dosym "$(basename ${sdram_file})" /u-boot/bct/sdram.cfg
-
 	doins "${flash_file}"
-	dosym "$(basename ${flash_file})" /u-boot/bct/flash.cfg
+
+	if [ "$(basename ${sdram_file})" != "sdram.cfg" ]; then
+		dosym "$(basename ${sdram_file})" /u-boot/bct/sdram.cfg
+	fi
+
+	if [ "$(basename ${flash_file})" != "flash.cfg" ]; then
+		dosym "$(basename ${flash_file})" /u-boot/bct/flash.cfg
+	fi
 
 	doins board.cfg
 	doins board.bct
