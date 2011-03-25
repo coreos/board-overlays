@@ -16,7 +16,7 @@
 # Flash memory configuration file to install
 : ${TEGRA_BCT_FLASH_CONFIG:=}
 
-DEPEND=""
+RDEPEND="sys-boot/chromeos-flasher-script"
 
 # Check for EAPI 2 or 3
 case "${EAPI:-0}" in
