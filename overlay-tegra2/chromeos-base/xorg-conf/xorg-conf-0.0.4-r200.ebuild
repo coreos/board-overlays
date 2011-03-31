@@ -8,13 +8,15 @@ DESCRIPTION="Board specific xorg configuration file."
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="opengles"
+IUSE="opengles -touchui"
 
 RDEPEND=""
 
 src_install() {
 	insinto /etc/X11
-	if use opengles; then
+	if use touchui; then
+		newins "${FILESDIR}/xorg.conf.touch" xorg.conf
+	elif use opengles; then
 		newins "${FILESDIR}/xorg.conf-${PV}" xorg.conf
 	else
 		newins "${FILESDIR}/xorg.conf.fbdev" xorg.conf
