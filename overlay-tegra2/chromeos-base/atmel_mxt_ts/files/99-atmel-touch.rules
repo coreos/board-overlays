@@ -1,1 +1,0 @@
-KERNEL=="event*", DRIVERS=="atmel_mxt_ts", SYMLINK+="input/mxt_touch"

@@ -13,8 +13,6 @@ KEYWORDS="arm"
 IUSE=""
 PROVIDE="virtual/chromeos-bsp"
 
-# Add dependencies for Atmel MXT touchscreen udev setup
-RDEPEND="chromeos-base/atmel_mxt_ts
-        "
+RDEPEND=""
 
 DEPEND=""
