@@ -19,7 +19,8 @@ IUSE="tegra-local-bins"
 DEPEND=""
 RDEPEND="sys-apps/nvrm
         >=x11-base/xorg-server-1.8
-        <x11-base/xorg-server-1.9"
+        <x11-base/xorg-server-1.9
+	chromeos-base/tegra-initscripts"
 
 ABI=`echo "${PV}" | cut -d. -f1`
 LDK=`echo "${PV}" | cut -d. -f2-`
