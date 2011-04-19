@@ -61,34 +61,6 @@ Section "Files"
 EndSection
 
 # **********************************************************************
-# Module section -- this is an optional section which is used to specify
-# which run-time loadable modules to load when the X server starts up.
-# **********************************************************************
-
-Section "Module"
-
-# This loads the DBE extension module.
-
-    Load	"dbe"
-    Load	"dri"
-    Load	"glx"
-
-# This loads the miscellaneous extensions module, and disables
-# initialisation of the XFree86-DGA extension within that module.
-
-    SubSection	"extmod"
-	Option	"omit xfree86-dga"
-    EndSubSection
-
-# This loads the Type1 and FreeType font modules
-
-#    Load	"type1"
-#    Load	"freetype"
-
-EndSection
-
-
-# **********************************************************************
 # Server flags section.  This contains various server-wide Options.
 # **********************************************************************
 
