@@ -14,6 +14,7 @@ DEPEND=""
 RDEPEND="chromeos-base/board-devices-private
 	tegradbg? ( chromeos-base/tegra-debug )
 	chromeos-base/u-boot-scripts
+	sys-boot/chromeos-bios
 	ath6002? ( net-wireless/ath6002 )
 	tegra2-ldk? (
 		opengles? ( media-libs/openmax )
