@@ -1,2 +1,2 @@
-virtual/kernel    sys-kernel/chromeos-kernel-next
+virtual/kernel    sys-kernel/chromeos-kernel
 virtual/u-boot    sys-boot/chromeos-u-boot-next
