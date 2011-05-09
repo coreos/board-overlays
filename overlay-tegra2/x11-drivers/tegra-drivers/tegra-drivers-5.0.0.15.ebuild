@@ -18,8 +18,8 @@ IUSE="tegra-local-bins"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-        >=x11-base/xorg-server-1.9
-        <x11-base/xorg-server-1.10
+        >=x11-base/xorg-server-1.6
+        <x11-base/xorg-server-1.7
 	chromeos-base/tegra-initscripts"
 
 ABI=`echo "${PV}" | cut -d. -f1`
@@ -31,4 +31,4 @@ else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-CROS_BINARY_SUM="6c3831f7be1b4b93bb5777f1d751f8be37c5fad3"
+CROS_BINARY_SUM="e1866bd215226b242507e693754719bfa59d4035"
