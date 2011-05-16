@@ -20,5 +20,6 @@ RDEPEND=""
 
 src_install() {
     dodir /lib/firmware || die
-    cp -ar "${FILESDIR}/"* "${D}"/lib/firmware || die
+    insinto /lib/firmware
+    doins -r "${FILESDIR}/"* || die
 }
