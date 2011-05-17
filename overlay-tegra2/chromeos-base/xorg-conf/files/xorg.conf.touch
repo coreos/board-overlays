@@ -46,12 +46,12 @@ Section "Files"
 # as well as specifying multiple comma-separated entries in one FontPath
 # command (or a combination of both methods)
 
-    FontPath	"/lib/X11/fonts/local"
-    FontPath	"/lib/X11/fonts/misc"
-    FontPath	"/lib/X11/fonts/Type1"
-    FontPath	"/lib/X11/fonts/TTF"
-    FontPath	"/lib/X11/fonts/75dpi"
-    FontPath	"/lib/X11/fonts/100dpi"
+#    FontPath	"/lib/X11/fonts/local"
+#    FontPath	"/lib/X11/fonts/misc"
+#    FontPath	"/lib/X11/fonts/Type1"
+#    FontPath	"/lib/X11/fonts/TTF"
+#    FontPath	"/lib/X11/fonts/75dpi"
+#    FontPath	"/lib/X11/fonts/100dpi"
 
 # ModulePath can be used to set a search path for the X server modules.
 # The default path is shown here.
