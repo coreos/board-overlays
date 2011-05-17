@@ -3,7 +3,7 @@
 
 EAPI=2
 
-DESCRIPTION="Board specific xorg configuration file."
+DESCRIPTION="Tegra2 overlay specific xorg configuration file."
 
 LICENSE="BSD"
 SLOT="0"
@@ -17,7 +17,7 @@ src_install() {
 	if use touchui; then
 		newins "${FILESDIR}/xorg.conf.touch" xorg.conf
 	elif use opengles; then
-		newins "${FILESDIR}/xorg.conf-${PV}" xorg.conf
+		newins "${FILESDIR}/xorg.conf.opengles" xorg.conf
 	else
 		newins "${FILESDIR}/xorg.conf.fbdev" xorg.conf
 	fi

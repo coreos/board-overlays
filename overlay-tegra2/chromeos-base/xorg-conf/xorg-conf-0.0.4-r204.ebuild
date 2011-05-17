@@ -1,1 +1,0 @@
-xorg-conf-0.0.4-r200.ebuild
