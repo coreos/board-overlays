@@ -1,309 +1,30 @@
-# $XdotOrg$
-#
-# Copyright (c) 1994-1998 by The XFree86 Project, Inc.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-# THE XFREE86 PROJECT BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
-# OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-# 
-# Except as contained in this notice, the name of the XFree86 Project shall
-# not be used in advertising or otherwise to promote the sale, use or other
-# dealings in this Software without prior written authorization from the
-# XFree86 Project.
-#
-# $XConsortium: XF86Conf.cpp /main/22 1996/10/23 11:43:51 kaleb $
-
-# **********************************************************************
-# This is a sample configuration file only, intended to illustrate
-# what a config file might look like.  Refer to the XF86Config(4/5)
-# man page for details about the format of this file. This man page
-# is installed as MANPAGE 
-# **********************************************************************
-
-# The ordering of sections is not important in version 4.0 and later.
-
-# **********************************************************************
-# Files section.  This allows default font and rgb paths to be set
-# **********************************************************************
-
-Section "Files"
-
-# Multiple FontPath entries are allowed (which are concatenated together),
-# as well as specifying multiple comma-separated entries in one FontPath
-# command (or a combination of both methods)
-
-#    FontPath	"/lib/X11/fonts/local"
-#    FontPath	"/lib/X11/fonts/misc"
-#    FontPath	"/lib/X11/fonts/Type1"
-#    FontPath	"/lib/X11/fonts/TTF"
-#    FontPath	"/lib/X11/fonts/75dpi"
-#    FontPath	"/lib/X11/fonts/100dpi"
-
-# ModulePath can be used to set a search path for the X server modules.
-# The default path is shown here.
-
-#    ModulePath	"/lib/xorg/modules"
-
-EndSection
-
-# **********************************************************************
-# Server flags section.  This contains various server-wide Options.
-# **********************************************************************
+# Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
 
 Section "ServerFlags"
-
-# This specifies the default ServerLayout section to use in the absence of the -layout command line option.
-
     Option	"DefaultServerLayout" "Internal"
-
-# Uncomment this to cause a core dump at the spot where a signal is 
-# received.  This may leave the console in an unusable state, but may
-# provide a better stack trace in the core dump to aid in debugging
-
-#    Option	"NoTrapSignals"
-
-# Uncomment this to disable the <Crtl><Alt><Fn> VT switch sequence
-# (where n is 1 through 12).  This allows clients to receive these key
-# events.
-
-#    Option	"DontVTSwitch"
-
-# Uncomment this to disable the <Crtl><Alt><BS> server abort sequence
-# This allows clients to receive this key event.
-
-#    Option	"DontZap"
-
-# Uncomment this to disable the <Crtl><Alt><KP_+>/<KP_-> mode switching
-# sequences.  This allows clients to receive these key events.
-
-#    Option	"DontZoom"
-
-# Uncomment this to disable tuning with the xvidtune client. With
-# it the client can still run and fetch card and monitor attributes,
-# but it will not be allowed to change them. If it tries it will
-# receive a protocol error.
-
-#    Option	"DisableVidModeExtension"
-
-# Uncomment this to enable the use of a non-local xvidtune client.
-
-#    Option	"AllowNonLocalXvidtune"
-
-# Uncomment this to disable dynamically modifying the input device
-# (mouse and keyboard) settings.
-
-#    Option	"DisableModInDev"
-
-# Uncomment this to enable the use of a non-local client to
-# change the keyboard or mouse settings (currently only xset).
-
-#    Option	"AllowNonLocalModInDev"
-
-# Set the basic blanking screen saver timeout in minutes.  0 to disable.
-
     Option	"blank time"	"0"
-
-# Set the DPMS timeouts.  These are set here because they are global
-# rather than screen-specific.  These settings alone don't enable DPMS.
-# It is enabled per-screen (or per-monitor), and even then only when
-# the driver supports it.
-
     Option	"standby time"	"0"
     Option	"suspend time"	"0"
     Option	"off time"	"0"
-
-# On some platform the server needs to estimate the sizes of PCI
-# memory and pio ranges. This is done by assuming that PCI ranges
-# don't overlap. Some broken BIOSes tend to set ranges of inactive
-# devices wrong. Here one can adjust how aggressive the assumptions
-# should be. Default is 0.
-
-# Option   "EstimateSizesAggresively" "0"
-
-# The following options remove dependencies on HAL for input
-# device detection
-
     Option	"AllowEmptyInput"	"False" 
     Option	"AutoAddDevices"	"False" 
     Option	"AutoEnableDevices"	"False" 
-
 EndSection
 
-# **********************************************************************
-# Input devices
-# **********************************************************************
-
-# **********************************************************************
-# Core keyboard's InputDevice section
-# **********************************************************************
-
 Section "InputDevice"
-
     Identifier	"Keyboard1"
     Driver	"kbd"
-
-# Set the keyboard auto repeat parameters.  Not all platforms implement
-# this.
-
     Option	"AutoRepeat"	"500 5"
-
-# Specifiy which keyboard LEDs can be user-controlled (eg, with xset(1)).
-
-#    Option	"Xleds"	"1 2 3"
-
-# To disable the XKEYBOARD extension, uncomment XkbDisable.
-
-#    Option	"XkbDisable"
-
-# To customise the XKB settings to suit your keyboard, modify the
-# lines below (which are the defaults).  For example, for a European
-# keyboard, you will probably want to use one of:
-#
-#    Option	"XkbModel"	"pc102"
-#    Option	"XkbModel"	"pc105"
-#
-# If you have a Microsoft Natural keyboard, you can use:
-#
-#    Option	"XkbModel"	"microsoft"
-#
-# If you have a US "windows" keyboard you will want:
-#
-#    Option	"XkbModel"	"pc104"
-#
-# Then to change the language, change the Layout setting.
-# For example, a german layout can be obtained with:
-#
-#    Option	"XkbLayout"	"de"
-#
-# or:
-#
-#    Option	"XkbLayout"	"de"
-#    Option	"XkbVariant"	"nodeadkeys"
-#
-# If you'd like to switch the positions of your capslock and
-# control keys, use:
-#
-#    Option	"XkbOptions"	"ctrl:swapcaps"
-
-
-# These are the default XKB settings for xorg
-#
-#    Option	"XkbRules"	"xorg"
-#    Option	"XkbModel"	"pc101"
-#    Option	"XkbLayout"	"us"
-#    Option	"XkbVariant"	""
-#    Option	"XkbOptions"	""
-
 EndSection
-
-
-# **********************************************************************
-# Core Pointer's InputDevice section
-# **********************************************************************
 
 Section "InputDevice"
-
-# Identifier and driver
-
     Identifier	"Mouse1"
     Driver	"mouse"
-
-# The mouse protocol and device.  Automatically detect the protocol.
-# Since HAL is not used to determine the device used, this device
-# may change depending on the system configuration.
-
     Option	"Protocol"	"Auto"
     Option	"Device"	"/dev/input/mice"
-
-# When using mouse connected to a PS/2 port (aka "MousePort"), set the
-# the protocol as follows.  On some platforms some other settings may
-# be available.
-
-#    Option "Protocol"	"PS/2"
-
-# Baudrate and SampleRate are only for some older Logitech mice.  In
-# almost every case these lines should be omitted.
-
-#    Option	"BaudRate"	"9600"
-#    Option	"SampleRate"	"150"
-
-# Emulate3Buttons is an option for 2-button mice
-# Emulate3Timeout is the timeout in milliseconds (default is 50ms)
-
-#    Option	"Emulate3Buttons"
-#    Option	"Emulate3Timeout"	"50"
-
-# ChordMiddle is an option for some 3-button Logitech mice, or any
-# 3-button mouse where the middle button generates left+right button
-# events.
-
-#    Option	"ChordMiddle"
-
 EndSection
-
-#Section "InputDevice"
-#    Identifier	"Mouse2"
-#    Driver	"mouse"
-#    Option	"Protocol"	"MouseMan"
-#    Option	"Device"	"/dev/mouse2"
-#EndSection
-
-# Some examples of extended input devices
-
-# Section "InputDevice"
-#    Identifier	"spaceball"
-#    Driver	"magellan"
-#    Option	"Device"	"/dev/cua0"
-# EndSection
-#
-# Section "InputDevice"
-#    Identifier	"spaceball2"
-#    Driver	"spaceorb"
-#    Option	"Device"	"/dev/cua0"
-# EndSection
-#
-# Section "InputDevice"
-#    Identifier	"touchscreen0"
-#    Driver	"microtouch"
-#    Option	"Device"	"/dev/ttyS0"
-#    Option	"MinX"		"1412"
-#    Option	"MaxX"		"15184"
-#    Option	"MinY"		"15372"
-#    Option	"MaxY"		"1230"
-#    Option	"ScreenNumber"	"0"
-#    Option	"ReportingMode"	"Scaled"
-#    Option	"ButtonNumber"	"1"
-#    Option	"SendCoreEvents"
-# EndSection
-#
-# Section "InputDevice"
-#    Identifier	"touchscreen1"
-#    Driver	"elo2300"
-#    Option	"Device"	"/dev/ttyS0"
-#    Option	"MinX"		"231"
-#    Option	"MaxX"		"3868"
-#    Option	"MinY"		"3858"
-#    Option	"MaxY"		"272"
-#    Option	"ScreenNumber"	"0"
-#    Option	"ReportingMode"	"Scaled"
-#    Option	"ButtonThreshold"	"17"
-#    Option	"ButtonNumber"	"1"
-#    Option	"SendCoreEvents"
-# EndSection
 
 Section "InputDevice"
 Identifier "mxt_touch"
@@ -321,18 +42,6 @@ Identifier "mxt_touch"
 # coordinate system is done in-driver and the X server is unaware of the
 # transformation.
 EndSection
-
-# **********************************************************************
-# Monitor section
-# **********************************************************************
-
-# Any number of monitor sections may be present
-#
-# To add a mode for a specific monitor, run:
-#   gtf [width] [height] [refresh]
-# and copy the result into the Monitor section for which the mode applies.
-# For example, the TFTLCD using 800x480:
-#   gtf 800 480 60
 
 Section "Monitor"
     Identifier	"TFTLCD"
@@ -366,127 +75,55 @@ Section "Monitor"
     ModeLine "1920x1080" 172.80  1920 2040 2248 2576  1080 1081 1084 1118  -HSync +Vsync
 EndSection
 
-# **********************************************************************
-# Graphics device section
-# **********************************************************************
-
-# Any number of graphics device sections may be present
-
 Section "Device"
-
     Identifier	"Tegra Internal"
     Driver	"tegra"
-
-# DisplayMask specifies the displays which are used by this device.
-# The output can be sent to a maximum of two physical displays.  The
-# primary monitor should correspond to the monitor in the Screen
-# section.  The secondary monitor will try its best to display at the
-# same resolution as the primary monitor.  Options for monitors are:
-
-#   Option	"DisplayMask" "TFTLCD"
-#   Option	"DisplayMask" "TV"
-#   Option	"DisplayMask" "CRT"
-#   Option	"DisplayMask" "HDMI"
-
-# Show the output on both the internal LCD and the external HDMI:
-#    Option      "DisplayMask" "TFTLCD,HDMI"
-
-    Option      "DisplayMask" "TFTLCD"
-
-# UseEDIDModes indicates which monitor's EDID modes should be used to
-# determine the supported resolutions.  The optimal resolution will be
-# used by default.
-
-#    Option      "UseEDIDModes" "TFTLCD"
-
-# EnableBlending indicates that desktop contents should be alpha
-# blended with the video underlay.  This is only applicable to GL
-# content, as X has no support for destination alpha.  Blending
-# can only be enabled on one screen at a time, so combining multiple
-# screen sections that enable blending in a server layout will
-# cause a failure.
-
     Option      "EnableBlending" "true"
-
 EndSection
 
 Section "Device"
-
     Identifier	"Tegra HDMI"
     Driver	"tegra"
-
     Option      "DisplayMask" "HDMI"
     Option      "UseEDIDModes" "HDMI"
     Option      "EnableBlending" "false"
-
 EndSection
 
 Section "Device"
-
     Identifier	"Tegra Mirror"
     Driver	"tegra"
-
     Option      "DisplayMask" "TFTLCD,HDMI"
     Option      "UseEDIDModes" "HDMI"
     Option      "EnableBlending" "true"
-
 EndSection
 
-
-
-# **********************************************************************
-# Screen sections.
-# **********************************************************************
-
 Section "Screen"
-
     Identifier	"Screen Internal"
     Device	"Tegra Internal"
     Monitor	"TFTLCD"
-
-# DefaultDepth should match the Depth of the Display.  Options are:
-#   16 for RGB 565
-#   24 for RGBA 8888
-
     DefaultDepth 24
-
-# The mode must be in the Monitor section referenced by the Monitor
-# property for this Screen.  The monitor must also be in the DisplayMask
-# for the Tegra Device.
-
     SubSection "Display"
         Depth		24
     EndSubsection
-
 EndSection
 
 Section "Screen"
-
     Identifier	"Screen HDMI"
     Device	"Tegra HDMI"
     Monitor	"HDMI"
-
     DefaultDepth 24
-
     SubSection "Display"
         Depth		24
-# Uncomment to override the preferred resolution chosen by UseEDIDModes
-#       Modes		"1920x1080"
         ViewPort	0 0
-# Uncomment to override the preferred resolution chosen by UseEDIDModes
-#       Virtual 	1920 1080
     EndSubsection
 
 EndSection
 
 Section "Screen"
-
     Identifier	"Screen Mirror"
     Device	"Tegra Mirror"
     Monitor	"HDMI"
-
     DefaultDepth 24
-
     SubSection "Display"
         Depth		24
 # Override the preferred resolution chosen by UseEDIDModes
@@ -495,13 +132,7 @@ Section "Screen"
 # Override the preferred resolution chosen by UseEDIDModes
         Virtual 	1280 720
     EndSubsection
-
 EndSection
-
-
-# **********************************************************************
-# ServerLayout sections.
-# **********************************************************************
 
 Section "ServerLayout"
     Identifier	"Internal"
