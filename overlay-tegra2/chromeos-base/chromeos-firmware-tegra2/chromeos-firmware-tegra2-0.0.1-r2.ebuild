@@ -24,3 +24,5 @@ CROS_WORKON_LOCALNAME="firmware"
 
 # System firmware image.
 CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"
+CROS_FIRMWARE_EXTRA_LIST="${FILESDIR}/extra"
+
