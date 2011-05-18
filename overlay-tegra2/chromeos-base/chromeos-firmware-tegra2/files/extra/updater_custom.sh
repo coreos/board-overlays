@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# TARGET_PLATFORM="tegra2"
+TARGET_PLATFORM="U-Boot"
 
 CUSTOMIZATION_RW_COMPATIBLE_CHECK="updater_custom_rw_compatible_check"
 

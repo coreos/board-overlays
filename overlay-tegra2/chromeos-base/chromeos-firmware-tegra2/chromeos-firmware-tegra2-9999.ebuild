@@ -18,10 +18,17 @@ DEPEND="sys-boot/chromeos-bios"
 
 CROS_WORKON_LOCALNAME="firmware"
 
+pkg_postinst() {
+	# Don't execute the updater on ARM platform because the firmware is
+	# compiled from source, changed frequently, and not tested enough.
+	# It may damage devices if it has bugs.
+	touch "${ROOT}"/root/.leave_firmware_alone ||
+		die "Cannot disable firmware updating"
+}
+
 # ---------------------------------------------------------------------------
 # CUSTOMIZATION SECTION
 
 # System firmware image.
 CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"
 CROS_FIRMWARE_EXTRA_LIST="${FILESDIR}/extra"
-
