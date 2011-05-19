@@ -14,9 +14,7 @@ RDEPEND=""
 
 src_install() {
 	insinto /etc/X11
-	if use touchui; then
-		newins "${FILESDIR}/xorg.conf.touch" xorg.conf
-	elif use opengles; then
+	if use opengles; then
 		newins "${FILESDIR}/xorg.conf.opengles" xorg.conf
 	else
 		newins "${FILESDIR}/xorg.conf.fbdev" xorg.conf
@@ -24,6 +22,9 @@ src_install() {
 
 	insinto /etc/X11/xorg.conf.d
 	if use multitouch; then
-		newins "${FILESDIR}/touchpad.conf-multitouch" touchpad.conf
+		newins "${FILESDIR}/touchpad-multitouch.conf" 50-touchpad-multitouch.conf
+	fi
+	if use touchui; then
+		newins "${FILESDIR}/touchscreen-mxt.conf" 60-touchscreen-mxt.conf
 	fi
 }

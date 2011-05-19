@@ -10,23 +10,6 @@ Section "ServerFlags"
     Option	"off time"	"0"
 EndSection
 
-Section "InputDevice"
-Identifier "mxt_touch"
-    Driver "evdev"
-    Option "SendCoreEvents" "false"
-    Option "GrabDevice" "true"
-    Option "Device" "/dev/input/mxt_touch"
-    Option "Calibration" "344 -5 5 799"
-# Numbers generated via xinput_calibrator
-# Option "Calibration" "min-x max-x min-y max-y"
-# Calibrates the X and Y axes for devices that need to scale to a different
-# coordinate system than reported to the X server. This feature is required for
-# devices that need to scale to a different coordinate system than originally
-# reported by the kernel (e.g. touchscreens). The scaling to the custom
-# coordinate system is done in-driver and the X server is unaware of the
-# transformation.
-EndSection
-
 Section "Monitor"
     Identifier	"TFTLCD"
 EndSection
@@ -121,24 +104,20 @@ EndSection
 Section "ServerLayout"
     Identifier	"Internal"
     Screen	"Screen Internal"
-    InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
     Identifier	"HDMI"
     Screen	"Screen HDMI"
-    InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
     Identifier	"DualView"
     Screen	"Screen Internal"
     Screen	"Screen HDMI" RightOf "Screen Internal"
-    InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
     Identifier	"Mirror"
     Screen	"Screen Mirror"
-    InputDevice	"mxt_touch"
 EndSection
