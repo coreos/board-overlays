@@ -15,6 +15,7 @@ KEYWORDS="~arm"
 IUSE=""
 
 DEPEND="sys-boot/chromeos-bios"
+RDEPEND="${DEPEND}"
 
 CROS_WORKON_LOCALNAME="firmware"
 
