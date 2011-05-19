@@ -8,22 +8,6 @@ Section "ServerFlags"
     Option	"standby time"	"0"
     Option	"suspend time"	"0"
     Option	"off time"	"0"
-    Option	"AllowEmptyInput"	"False" 
-    Option	"AutoAddDevices"	"False" 
-    Option	"AutoEnableDevices"	"False" 
-EndSection
-
-Section "InputDevice"
-    Identifier	"Keyboard1"
-    Driver	"kbd"
-    Option	"AutoRepeat"	"500 5"
-EndSection
-
-Section "InputDevice"
-    Identifier	"Mouse1"
-    Driver	"mouse"
-    Option	"Protocol"	"Auto"
-    Option	"Device"	"/dev/input/mice"
 EndSection
 
 Section "InputDevice"
@@ -137,16 +121,12 @@ EndSection
 Section "ServerLayout"
     Identifier	"Internal"
     Screen	"Screen Internal"
-    InputDevice	"Mouse1" "CorePointer"
-    InputDevice "Keyboard1" "CoreKeyboard"
     InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
     Identifier	"HDMI"
     Screen	"Screen HDMI"
-    InputDevice	"Mouse1" "CorePointer"
-    InputDevice "Keyboard1" "CoreKeyboard"
     InputDevice	"mxt_touch"
 EndSection
 
@@ -154,15 +134,11 @@ Section "ServerLayout"
     Identifier	"DualView"
     Screen	"Screen Internal"
     Screen	"Screen HDMI" RightOf "Screen Internal"
-    InputDevice	"Mouse1" "CorePointer"
-    InputDevice "Keyboard1" "CoreKeyboard"
     InputDevice	"mxt_touch"
 EndSection
 
 Section "ServerLayout"
     Identifier	"Mirror"
     Screen	"Screen Mirror"
-    InputDevice	"Mouse1" "CorePointer"
-    InputDevice "Keyboard1" "CoreKeyboard"
     InputDevice	"mxt_touch"
 EndSection

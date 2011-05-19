@@ -7,22 +7,6 @@ Section "ServerFlags"
     Option	"standby time"	"0"
     Option	"suspend time"	"0"
     Option	"off time"	"0"
-    Option	"AllowEmptyInput"	"False" 
-    Option	"AutoAddDevices"	"False" 
-    Option	"AutoEnableDevices"	"False" 
-EndSection
-
-Section "InputDevice"
-    Identifier	"Keyboard1"
-    Driver	"kbd"
-    Option	"AutoRepeat"	"500 5"
-EndSection
-
-Section "InputDevice"
-    Identifier	"Mouse1"
-    Driver	"mouse"
-    Option	"Protocol"	"Auto"
-    Option	"Device"	"/dev/input/mice"
 EndSection
 
 Section "Monitor"
@@ -86,6 +70,4 @@ EndSection
 Section "ServerLayout"
     Identifier	"Framebuffer"
     Screen	"Screen Framebuffer"
-    InputDevice	"Mouse1" "CorePointer"
-    InputDevice	"Keyboard1" "CoreKeyboard"
 EndSection
