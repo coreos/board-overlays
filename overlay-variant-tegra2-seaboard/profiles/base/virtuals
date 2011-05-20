@@ -1,2 +1,4 @@
-virtual/tegra-bct	sys-boot/tegra-bct-seaboard
-virtual/chromeos-bsp	chromeos-base/chromeos-bsp-seaboard
+#Add virtual packages for this profile
+virtual/kernel		sys-kernel/chromeos-kernel
+virtual/u-boot		sys-boot/chromeos-u-boot
+virtual/chromeos-bsp	chromeos-base/chromeos-bsp-null
