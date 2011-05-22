@@ -8,19 +8,16 @@ DESCRIPTION="Tegra2 overlay specific xorg configuration file."
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="opengles -touchui multitouch"
+IUSE="-touchui multitouch"
 
 RDEPEND=""
 
 src_install() {
 	insinto /etc/X11
-	if use opengles; then
-		newins "${FILESDIR}/xorg.conf.opengles" xorg.conf
-	else
-		newins "${FILESDIR}/xorg.conf.fbdev" xorg.conf
-	fi
+	newins "${FILESDIR}/xorg.conf" xorg.conf
 
 	insinto /etc/X11/xorg.conf.d
+	newins "${FILESDIR}/tegra.conf" tegra.conf
 	if use multitouch; then
 		newins "${FILESDIR}/touchpad-multitouch.conf" 50-touchpad-multitouch.conf
 	fi
