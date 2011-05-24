@@ -20,6 +20,8 @@ RDEPEND="${DEPEND}"
 
 CROS_WORKON_LOCALNAME="firmware"
 
+BOARD="${BOARD:-${SYSROOT##/build/}}"
+
 pkg_postinst() {
 	# Don't execute the updater on ARM platform because the firmware is
 	# compiled from source, changed frequently, and not tested enough.
@@ -30,6 +32,9 @@ pkg_postinst() {
 
 # ---------------------------------------------------------------------------
 # CUSTOMIZATION SECTION
+
+# Remove the tegra2_ prefix from board name and capitalize it.
+CROS_FIRMWARE_PLATFORM="$(echo ${BOARD} | sed -r 's/tegra2_(.)/\u\1/')"
 
 # System firmware image.
 CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"
