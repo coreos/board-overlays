@@ -13,6 +13,6 @@ KEYWORDS="arm"
 IUSE=""
 PROVIDE="virtual/chromeos-bsp"
 
-RDEPEND=""
+RDEPEND="chromeos-base/brcmfmac-nvram"
 
 DEPEND=""

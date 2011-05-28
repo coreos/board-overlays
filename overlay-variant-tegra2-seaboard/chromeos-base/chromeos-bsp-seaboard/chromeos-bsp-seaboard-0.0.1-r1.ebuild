@@ -1,1 +1,0 @@
-chromeos-bsp-seaboard-0.0.1.ebuild
