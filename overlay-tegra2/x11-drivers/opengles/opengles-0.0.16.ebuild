@@ -5,13 +5,14 @@ EAPI=2
 
 inherit cros-binary
 
-DESCRIPTION="NVIDIA binary nvrm daemon and libraries for Tegra2"
+DESCRIPTION="NVIDIA binary OpenGL|ES libraries for Tegra2"
 SLOT="0"
 KEYWORDS="arm"
 IUSE="tegra-local-bins"
 
-RDEPEND="chromeos-base/chromeos-init"
-DEPEND="${RDEPEND}"
+DEPEND=""
+RDEPEND="sys-apps/nvrm
+	x11-drivers/opengles-headers"
 
 if use tegra-local-bins; then
 	URI_BASE="file://"
@@ -19,14 +20,4 @@ else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="4cae2e49227b16a56bb7f9c6bde1908fb332f47a"
-
-src_install() {
-	insinto /etc/init
-	doins ${FILESDIR}/etc/init/nvrm.conf			|| die
-
-	insinto /etc/udev/rules.d
-	doins ${FILESDIR}/etc/udev/rules.d/51-nvrm.rules	|| die
-
-	cros-binary_src_install
-}
+CROS_BINARY_SUM="77e5ce87febbd312a9d7cb6c7617b57f01f43924"
