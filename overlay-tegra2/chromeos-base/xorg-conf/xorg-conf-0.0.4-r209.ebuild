@@ -24,4 +24,5 @@ src_install() {
 	if use touchui; then
 		newins "${FILESDIR}/touchscreen-mxt.conf" 60-touchscreen-mxt.conf
 	fi
+	newins "${FILESDIR}/20-mouse.conf" 20-mouse.conf
 }
