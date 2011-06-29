@@ -13,13 +13,13 @@ inherit cros-binary
 
 DESCRIPTION="Tegra2 user-land drivers"
 SLOT="0"
-KEYWORDS="arm"
+KEYWORDS="~arm"
 IUSE="tegra-local-bins"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-        >=x11-base/xorg-server-1.6
-        <x11-base/xorg-server-1.7
+        >=x11-base/xorg-server-1.8
+        <x11-base/xorg-server-1.9
 	chromeos-base/tegra-initscripts"
 
 ABI=`echo "${PV}" | cut -d. -f1`
@@ -31,4 +31,4 @@ else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-CROS_BINARY_SUM="ddb0f1015d431a9e7cad433d59da0fa5e7ed970b"
+CROS_BINARY_SUM="241a3eade6b459ad1e1fbeb224c631630383cb07"
