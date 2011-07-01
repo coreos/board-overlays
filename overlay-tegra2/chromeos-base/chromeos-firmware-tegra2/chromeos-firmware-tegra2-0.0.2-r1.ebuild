@@ -7,21 +7,20 @@ CROS_WORKON_PROJECT="chromiumos/platform/firmware"
 
 inherit cros-workon cros-firmware
 
+CROS_WORKON_LOCALNAME="firmware"
+
 DESCRIPTION="Chrome OS Firmware"
 HOMEPAGE="http://www.chromium.org/"
-SRC_URI=""
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-DEPEND="sys-boot/chromeos-bios"
-RDEPEND="${DEPEND}"
+# TODO(hungte) replace this with sys-boot/chromeos-bootimage
+DEPEND="${DEPEND} sys-boot/chromeos-bios"
+SRC_URI=""
 
-CROS_WORKON_LOCALNAME="firmware"
-
-BOARD="${BOARD:-${SYSROOT##/build/}}"
-
+# TODO(hungte) make this into option CROS_FIRMWARE_UNSTABLE
 pkg_postinst() {
 	# Don't execute the updater on ARM platform because the firmware is
 	# compiled from source, changed frequently, and not tested enough.
@@ -34,7 +33,10 @@ pkg_postinst() {
 # CUSTOMIZATION SECTION
 
 # Remove the tegra2_ prefix from board name and capitalize it.
-CROS_FIRMWARE_PLATFORM="$(echo ${BOARD} | sed -r 's/tegra2_(.)/\u\1/')"
+# TODO(hungte) support boards with more variants postfix like -xx or _yy.
+BOARD="${BOARD:-${SYSROOT##/build/}}"
+BOARD_NAME="${BOARD##*_}"
+CROS_FIRMWARE_PLATFORM="${CROS_FIRMWARE_PLATFORM:-${BOARD_NAME^*}}"
 
 # System firmware image.
 CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"

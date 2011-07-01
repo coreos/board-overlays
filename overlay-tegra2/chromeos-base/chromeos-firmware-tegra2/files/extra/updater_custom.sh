@@ -18,11 +18,8 @@ updater_custom_rw_compatible_check() {
         # let's convert every 'autoupdate' request into 'recovery.
         # We need to fix this one the new design of ARM firmware updating is
         # complete.
-        VERSION=$(echo $(cat VERSION | grep BIOS\ version | cut -f2 -d:))
-        if [ "$VERSION" != "$FWID" ]; then
+        if [ "$TARGET_FWID" != "$FWID" ]; then
           return $FLAGS_FALSE
-        else
-          true
         fi
     esac
   fi
