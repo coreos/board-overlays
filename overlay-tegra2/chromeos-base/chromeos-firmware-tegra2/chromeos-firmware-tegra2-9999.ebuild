@@ -15,8 +15,7 @@ SLOT="0"
 KEYWORDS="~arm"
 IUSE=""
 
-# TODO(hungte) replace this with sys-boot/chromeos-bootimage
-DEPEND="${DEPEND} sys-boot/chromeos-bios"
+DEPEND="${DEPEND} sys-boot/chromeos-bootimage"
 SRC_URI=""
 
 # TODO(hungte) make this into option CROS_FIRMWARE_UNSTABLE
