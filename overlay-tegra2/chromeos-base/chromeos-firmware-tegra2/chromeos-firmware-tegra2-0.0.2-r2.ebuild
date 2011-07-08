@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=2
-CROS_WORKON_COMMIT="dc3552640e6cf4b05226fefc51ee027d8602f44a"
 CROS_WORKON_PROJECT="chromiumos/platform/firmware"
 
 inherit cros-workon cros-firmware
@@ -16,8 +15,7 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-# TODO(hungte) replace this with sys-boot/chromeos-bootimage
-DEPEND="${DEPEND} sys-boot/chromeos-bios"
+DEPEND="${DEPEND} sys-boot/chromeos-bootimage"
 SRC_URI=""
 
 # TODO(hungte) make this into option CROS_FIRMWARE_UNSTABLE
