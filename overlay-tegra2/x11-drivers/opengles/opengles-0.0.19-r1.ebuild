@@ -8,7 +8,7 @@ inherit cros-binary
 DESCRIPTION="NVIDIA binary OpenGL|ES libraries for Tegra2"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="tegra-local-bins"
+IUSE="tegra-local-bins hardfp"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
@@ -19,5 +19,10 @@ if use tegra-local-bins; then
 else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="9b6cc96206713e8abe513595ce32afab5f9851ce"
+if use hardfp; then
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-${PV}.tbz2"
+	CROS_BINARY_SUM="41d1f4efefba4b599c92e1a87bd22080a2eea88e"
+else
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
+	CROS_BINARY_SUM="9b6cc96206713e8abe513595ce32afab5f9851ce"
+fi
