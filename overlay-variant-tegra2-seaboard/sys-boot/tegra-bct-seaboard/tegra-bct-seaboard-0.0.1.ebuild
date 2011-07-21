@@ -16,15 +16,15 @@ RDEPEND=""
 DEPEND=""
 
 if use "tegra20-bct"; then
-  BCT_PREFIX="t20-"
+  BCT_PREFIX="t20"
 else
-  BCT_PREFIX="t25-"
+  BCT_PREFIX="t25"
 fi
 
 if use "bootflash-nand"; then
-  TEGRA_BCT_FLASH_CONFIG="${BCT_PREFIX}nand.cfg"
-  TEGRA_BCT_SDRAM_CONFIG="${BCT_PREFIX}sdram-nand.cfg"
+  TEGRA_BCT_FLASH_CONFIG="nand.cfg"
 elif use "bootflash-spi"; then
-  TEGRA_BCT_FLASH_CONFIG="${BCT_PREFIX}spi.cfg"
-  TEGRA_BCT_SDRAM_CONFIG="${BCT_PREFIX}sdram-spi.cfg"
+  TEGRA_BCT_FLASH_CONFIG="spi.cfg"
 fi
+
+TEGRA_BCT_SDRAM_CONFIG="${BCT_PREFIX}-seaboard-sdram.cfg"
