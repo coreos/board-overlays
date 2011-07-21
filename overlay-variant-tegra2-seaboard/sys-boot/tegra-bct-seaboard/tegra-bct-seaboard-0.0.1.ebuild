@@ -9,17 +9,22 @@ DESCRIPTION="Seaboard BCT file"
 LICENSE=""
 SLOT="0"
 KEYWORDS="arm"
-IUSE="bootflash-nand bootflash-spi"
+IUSE="bootflash-nand bootflash-spi tegra20-bct"
 PROVIDE="virtual/tegra-bct"
 
 RDEPEND=""
 DEPEND=""
 
-if use "bootflash-nand"; then
-  TEGRA_BCT_FLASH_CONFIG="nand.cfg"
-  TEGRA_BCT_SDRAM_CONFIG="sdram-nand.cfg"
+if use "tegra20-bct"; then
+  BCT_PREFIX="t20-"
+else
+  BCT_PREFIX="t25-"
+fi
 
+if use "bootflash-nand"; then
+  TEGRA_BCT_FLASH_CONFIG="${BCT_PREFIX}nand.cfg"
+  TEGRA_BCT_SDRAM_CONFIG="${BCT_PREFIX}sdram-nand.cfg"
 elif use "bootflash-spi"; then
-  TEGRA_BCT_FLASH_CONFIG="spi.cfg"
-  TEGRA_BCT_SDRAM_CONFIG="sdram-spi.cfg"
+  TEGRA_BCT_FLASH_CONFIG="${BCT_PREFIX}spi.cfg"
+  TEGRA_BCT_SDRAM_CONFIG="${BCT_PREFIX}sdram-spi.cfg"
 fi
