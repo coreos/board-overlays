@@ -5,7 +5,7 @@
 CUSTOMIZATION_RW_COMPATIBLE_CHECK="updater_custom_rw_compatible_check"
 
 updater_custom_main() {
-  debug_msg "Customization for $TARGET_PLATFORM loaded."
+  true
 }
 
 updater_custom_rw_compatible_check() {
@@ -14,19 +14,7 @@ updater_custom_rw_compatible_check() {
   if [ "${FLAGS_update_main}" = ${FLAGS_TRUE} ]; then
     case "$FWID" in
       * )
-        # For ARM platforms, there is almost nothing to change in RW yet;
-        # let's convert every 'autoupdate' request into 'recovery.
-        # We need to fix this one the new design of ARM firmware updating is
-        # complete.
-        if [ "$TARGET_FWID" != "$FWID" ]; then
-          return $FLAGS_FALSE
-        fi
+        true
     esac
   fi
 }
-
-# One-time shot update for legacy firmware
-if ! crossystem hwid >/dev/null 2>&1; then
-  verbose_msg "One-time update from legacy firmware."
-  FLAGS_mode=factory_install
-fi

@@ -18,15 +18,6 @@ IUSE=""
 DEPEND="${DEPEND} sys-boot/chromeos-bootimage"
 SRC_URI=""
 
-# TODO(hungte) make this into option CROS_FIRMWARE_UNSTABLE
-pkg_postinst() {
-	# Don't execute the updater on ARM platform because the firmware is
-	# compiled from source, changed frequently, and not tested enough.
-	# It may damage devices if it has bugs.
-	touch "${ROOT}"/root/.leave_firmware_alone ||
-		die "Cannot disable firmware updating"
-}
-
 # ---------------------------------------------------------------------------
 # CUSTOMIZATION SECTION
 
@@ -35,6 +26,10 @@ pkg_postinst() {
 BOARD="${BOARD:-${SYSROOT##/build/}}"
 BOARD_NAME="${BOARD##*_}"
 CROS_FIRMWARE_PLATFORM="${CROS_FIRMWARE_PLATFORM:-${BOARD_NAME^*}}"
+
+# Use v3 updater
+CROS_FIRMWARE_SCRIPT="updater3.sh"
+CROS_FIRMWARE_UNSTABLE="TRUE"
 
 # System firmware image.
 CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"
