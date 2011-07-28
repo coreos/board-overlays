@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=2
-CROS_WORKON_COMMIT="a5f9de0d96124daed157548b21363d1470516cc0"
+CROS_WORKON_COMMIT="8ea30c0aeeb2638ba90cd03a6bb827e95af04455"
 CROS_WORKON_PROJECT="chromiumos/platform/firmware"
 
 inherit cros-workon cros-firmware
@@ -19,15 +19,6 @@ IUSE=""
 DEPEND="${DEPEND} sys-boot/chromeos-bootimage"
 SRC_URI=""
 
-# TODO(hungte) make this into option CROS_FIRMWARE_UNSTABLE
-pkg_postinst() {
-	# Don't execute the updater on ARM platform because the firmware is
-	# compiled from source, changed frequently, and not tested enough.
-	# It may damage devices if it has bugs.
-	touch "${ROOT}"/root/.leave_firmware_alone ||
-		die "Cannot disable firmware updating"
-}
-
 # ---------------------------------------------------------------------------
 # CUSTOMIZATION SECTION
 
@@ -36,6 +27,10 @@ pkg_postinst() {
 BOARD="${BOARD:-${SYSROOT##/build/}}"
 BOARD_NAME="${BOARD##*_}"
 CROS_FIRMWARE_PLATFORM="${CROS_FIRMWARE_PLATFORM:-${BOARD_NAME^*}}"
+
+# Use v3 updater
+CROS_FIRMWARE_SCRIPT="updater3.sh"
+CROS_FIRMWARE_UNSTABLE="TRUE"
 
 # System firmware image.
 CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"
