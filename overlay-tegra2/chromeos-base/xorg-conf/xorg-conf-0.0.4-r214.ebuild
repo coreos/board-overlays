@@ -8,7 +8,7 @@ DESCRIPTION="Tegra2 overlay specific xorg configuration file."
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="-touchui multitouch cmt"
+IUSE="multitouch cmt"
 
 RDEPEND=""
 
@@ -22,9 +22,6 @@ src_install() {
 		newins "${FILESDIR}/touchpad-cmt.conf" 50-touchpad-cmt.conf
 	elif use multitouch; then
 		newins "${FILESDIR}/touchpad-multitouch.conf" 50-touchpad-multitouch.conf
-	fi
-	if use touchui; then
-		newins "${FILESDIR}/touchscreen-mxt.conf" 60-touchscreen-mxt.conf
 	fi
 	newins "${FILESDIR}/20-mouse.conf" 20-mouse.conf
 }
