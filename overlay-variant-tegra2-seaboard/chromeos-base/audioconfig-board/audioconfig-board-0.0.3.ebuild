@@ -14,4 +14,7 @@ IUSE=""
 src_install() {
 	insinto /usr/share/alsa/init
 	doins "${FILESDIR}"/chromeos-per-session || die
+
+	insinto /etc
+	doins "${FILESDIR}"/asound.state || die
 }
