@@ -290,8 +290,8 @@ state.tegraseaboard {
 		comment.dbmax 1800
 		iface MIXER
 		name 'Digital Capture Volume'
-		value.0 84
-		value.1 84
+		value.0 96
+		value.1 96
 	}
 	control.29 {
 		comment.access 'read write'
@@ -342,8 +342,8 @@ state.tegraseaboard {
 		comment.dbmax 1800
 		iface MIXER
 		name 'Digital Playback Volume'
-		value.0 84
-		value.1 84
+		value.0 96
+		value.1 96
 	}
 	control.34 {
 		comment.access 'read write'
@@ -695,7 +695,7 @@ state.tegraseaboard {
 		comment.item.1 DMIC
 		iface MIXER
 		name 'ADC Input'
-		value ADC
+		value DMIC
 	}
 	control.73 {
 		comment.access 'read write'
