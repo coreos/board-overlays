@@ -5,15 +5,14 @@ EAPI=2
 
 inherit cros-binary
 
-DESCRIPTION="OpenMAX binary libraries"
+DESCRIPTION="NVIDIA binary OpenGL|ES libraries for Tegra2"
 SLOT="0"
 KEYWORDS="arm"
 IUSE="tegra-local-bins hardfp"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-	x11-drivers/opengles"
-
+	x11-drivers/opengles-headers"
 
 if use tegra-local-bins; then
 	URI_BASE="file://"
@@ -22,8 +21,8 @@ else
 fi
 if use hardfp; then
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-${PV}.tbz2"
-	CROS_BINARY_SUM="af99332b6a12686a03ae08e39c477eb30c980df4"
+	CROS_BINARY_SUM="dcd103ef7d34c41139e76b5b48d4ba442e1c62b5"
 else
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-	CROS_BINARY_SUM="c4dd6b5c459cefc8f39deef75ae8ef1e86989463"
+	CROS_BINARY_SUM="e46232242488625d64f348e2673ac875712feec9"
 fi

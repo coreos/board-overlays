@@ -14,7 +14,7 @@ inherit cros-binary
 DESCRIPTION="Tegra2 user-land drivers"
 SLOT="0"
 KEYWORDS="~arm"
-IUSE="tegra-local-bins"
+IUSE="tegra-local-bins hardfp"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
@@ -30,5 +30,10 @@ if use tegra-local-bins; then
 else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-CROS_BINARY_SUM="4c2ef247401d31532e486f767f429589daf95a4b"
+if use hardfp; then
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-abi${ABI}-${LDK}.tbz2"
+	CROS_BINARY_SUM="db7d679653a6e0efadcdf840922eb6a1740ec62e"
+else
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
+	CROS_BINARY_SUM="b1f33aa4ce4b6d67e4ce73ef557d3acfab6bb1d8"
+fi

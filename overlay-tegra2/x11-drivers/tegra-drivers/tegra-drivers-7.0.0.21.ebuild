@@ -13,13 +13,13 @@ inherit cros-binary
 
 DESCRIPTION="Tegra2 user-land drivers"
 SLOT="0"
-KEYWORDS="arm"
+KEYWORDS="~arm"
 IUSE="tegra-local-bins hardfp"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-        >=x11-base/xorg-server-1.6
-        <x11-base/xorg-server-1.7
+        >=x11-base/xorg-server-1.8
+        <x11-base/xorg-server-1.9
 	chromeos-base/tegra-initscripts"
 
 ABI=`echo "${PV}" | cut -d. -f1`
@@ -32,8 +32,8 @@ else
 fi
 if use hardfp; then
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-abi${ABI}-${LDK}.tbz2"
-	CROS_BINARY_SUM="936dbd40d15633b02262bab364f33aeb40aa147b"
+	CROS_BINARY_SUM="dac87b0167729e98f01f5197180b09a425fc3c50"
 else
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-	CROS_BINARY_SUM="c972f965d896850b3acee83be23650c299b52719"
+	CROS_BINARY_SUM="73d329655ea7a4f61bc0d278f7055921a491079e"
 fi

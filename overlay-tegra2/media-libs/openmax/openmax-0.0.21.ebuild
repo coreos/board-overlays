@@ -8,16 +8,22 @@ inherit cros-binary
 DESCRIPTION="OpenMAX binary libraries"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="tegra-local-bins"
+IUSE="tegra-local-bins hardfp"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
 	x11-drivers/opengles"
+
 
 if use tegra-local-bins; then
 	URI_BASE="file://"
 else
 	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
 fi
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="9a8135efa9d58f7d498feb0b6ed6226d9a8aa003"
+if use hardfp; then
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-${PV}.tbz2"
+	CROS_BINARY_SUM="83e70fe20de5e2e5622a0b625b46a5897ca39421"
+else
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
+	CROS_BINARY_SUM="5f0d16175d46705280328d2f94eb75f476f4838b"
+fi
