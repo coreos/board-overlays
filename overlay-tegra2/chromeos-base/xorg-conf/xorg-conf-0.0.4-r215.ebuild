@@ -13,9 +13,6 @@ IUSE="multitouch cmt"
 RDEPEND=""
 
 src_install() {
-	insinto /etc/X11
-	newins "${FILESDIR}/xorg.conf" xorg.conf
-
 	insinto /etc/X11/xorg.conf.d
 	newins "${FILESDIR}/tegra.conf" tegra.conf
 	if use cmt; then
