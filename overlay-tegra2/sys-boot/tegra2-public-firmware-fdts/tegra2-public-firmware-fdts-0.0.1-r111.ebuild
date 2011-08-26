@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=2
-CROS_WORKON_COMMIT="2cb5ad9807f941c59bdd4c3b102ed71ec1d521ea"
+CROS_WORKON_COMMIT="5cb504bb2aa840234d61390ef66c0e7362e7b744"
 
 inherit cros-fdt
 
