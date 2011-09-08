@@ -52,7 +52,26 @@ tegra-bct_src_install() {
 	local sdram_file=${FILESDIR}/${TEGRA_BCT_SDRAM_CONFIG}
 	local flash_file=${FILESDIR}/${TEGRA_BCT_FLASH_CONFIG}
 
-	dodir /u-boot/bct
+	insinto /firmware/bct
+
+	doins "${sdram_file}"
+	doins "${flash_file}"
+
+	if [ "$(basename ${sdram_file})" != "sdram.cfg" ]; then
+		dosym "$(basename ${sdram_file})" /firmware/bct/sdram.cfg
+	fi
+
+	if [ "$(basename ${flash_file})" != "flash.cfg" ]; then
+		dosym "$(basename ${flash_file})" /firmware/bct/flash.cfg
+	fi
+
+	doins board.cfg
+	doins board.bct
+
+	# -----------------------------------------------------------------
+	# This section will be deleted once all scripts and ebuilds
+	# switched over to using /firmware instead of /u-boot
+	# -----------------------------------------------------------------
 	insinto /u-boot/bct
 
 	doins "${sdram_file}"
@@ -68,6 +87,7 @@ tegra-bct_src_install() {
 
 	doins board.cfg
 	doins board.bct
+	# -----------------------------------------------------------------
 }
 
 EXPORT_FUNCTIONS src_configure src_compile src_install
