@@ -33,5 +33,5 @@ CROS_FIRMWARE_SCRIPT="updater3.sh"
 CROS_FIRMWARE_UNSTABLE="TRUE"
 
 # System firmware image.
-CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/u-boot/image.bin"
+CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/firmware/image.bin"
 CROS_FIRMWARE_EXTRA_LIST="${FILESDIR}/extra"
