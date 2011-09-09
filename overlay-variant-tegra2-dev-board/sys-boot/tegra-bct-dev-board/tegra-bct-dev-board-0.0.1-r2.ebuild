@@ -1,1 +1,0 @@
-tegra-bct-dev-board-0.0.1.ebuild
