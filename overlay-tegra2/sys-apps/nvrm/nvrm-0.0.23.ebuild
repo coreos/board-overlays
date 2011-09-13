@@ -20,10 +20,10 @@ else
 fi
 if use hardfp; then
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-${PV}.tbz2"
-	CROS_BINARY_SUM="8baaae478d60385d3649e913ff88d8ef7b7e2479"
+	CROS_BINARY_SUM="89cd6466b92d0df8dc088dafd247aa7f09fab507"
 else
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-	CROS_BINARY_SUM="7bf5e9b53c4c4b945e7779b897578782d0d4364c"
+	CROS_BINARY_SUM="496a434c04c969225b6af6a3f4ac0b6dcf70db23"
 fi
 
 src_install() {

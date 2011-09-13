@@ -32,8 +32,8 @@ else
 fi
 if use hardfp; then
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-abi${ABI}-${LDK}.tbz2"
-	CROS_BINARY_SUM="db7d679653a6e0efadcdf840922eb6a1740ec62e"
+	CROS_BINARY_SUM="8538c0f8b90f89dd8814640068624f5ea400d726"
 else
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-	CROS_BINARY_SUM="b1f33aa4ce4b6d67e4ce73ef557d3acfab6bb1d8"
+	CROS_BINARY_SUM="b609278eb9dff692ab2fe0d0bd94abbfcbb413cf"
 fi
