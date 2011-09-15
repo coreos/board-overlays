@@ -8,19 +8,21 @@ DESCRIPTION="Tegra2 overlay specific xorg configuration file."
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="aebl cmt kaen multitouch"
+IUSE="cmt multitouch"
 
 RDEPEND=""
 DEPEND="${RDEPEND}"
 
 src_install() {
+	local BOARD="${BOARD:-${SYSROOT##/build/}}"
+
 	insinto /etc/X11/xorg.conf.d
 	doins "${FILESDIR}/tegra.conf"
 	if use cmt; then
 		doins "${FILESDIR}/50-touchpad-cmt.conf"
-		if use aebl; then
+		if [ "${BOARD}" = "tegra2_aebl" ]; then
 			doins "${FILESDIR}/50-touchpad-cmt-aebl.conf"
-		elif use kaen; then
+		elif [ "${BOARD}" = "tegra2_kaen" ]; then
 			doins "${FILESDIR}/50-touchpad-cmt-kaen.conf"
 		fi
 	elif use multitouch; then
