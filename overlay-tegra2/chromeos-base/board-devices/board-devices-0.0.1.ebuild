@@ -19,6 +19,4 @@ RDEPEND="chromeos-base/board-devices-private
 		opengles? ( media-libs/openmax )
 		x11-drivers/tegra-drivers
 	)
-	!tegra2-ldk? ( || ( <x11-drivers/opengles-0.0.2
-		>=x11-drivers/opengles-9999 ) )
 	"
