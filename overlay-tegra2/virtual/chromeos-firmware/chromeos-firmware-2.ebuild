@@ -17,5 +17,5 @@ IUSE="board_use_tegra2"
 # board. Hence we use this use flag to pick a firmware implementation.
 RDEPEND="
 	!board_use_tegra2? ( >=chromeos-base/chromeos-firmware-tegra2-0.0.2-r2 )
-	board_use_tegra2? ( chromeos-firmware-null )
+	board_use_tegra2? ( chromeos-base/chromeos-firmware-null )
 	"
