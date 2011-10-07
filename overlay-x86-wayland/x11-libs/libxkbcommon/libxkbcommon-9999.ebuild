@@ -14,3 +14,8 @@ RDEPEND="x11-proto/xproto
 DEPEND="${RDEPEND}
 	sys-devel/bison
 	sys-devel/flex"
+
+src_prepare() {
+	echo "CFLAGS =" >> ${S}/makekeys/Makefile.am
+	xorg-2_src_prepare
+}
