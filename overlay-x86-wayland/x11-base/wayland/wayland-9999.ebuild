@@ -4,7 +4,7 @@
 
 EAPI=4
 
-inherit git autotools
+inherit git autotools toolchain-funcs
 
 DESCRIPTION="Wayland protocol libraries"
 HOMEPAGE="http://wayland.freedesktop.org/"
@@ -24,5 +24,9 @@ src_prepare() {
 }
 
 src_configure() {
-	econf $(use_enable static-libs static)
+	if tc-is-cross-compiler ; then
+		econf $(use_enable static-libs static) --disable-scanner
+	else
+		econf $(use_enable static-libs static)
+	fi
 }
