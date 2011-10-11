@@ -1,5 +1,3 @@
-Manifest
-
 # Re-enable file types that may be present in overlays (e.g. binaries).
 !*.a
 !*.la
