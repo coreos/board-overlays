@@ -15,6 +15,13 @@ DEPEND="${RDEPEND}
 	sys-devel/bison
 	sys-devel/flex"
 
+pkg_setup() {
+	xorg-2_pkg_setup
+	XORG_CONFIGURE_OPTIONS=(
+		--with-xkb-config-root=/usr/share/X11/xkb
+	)
+}
+
 src_prepare() {
 	echo "CFLAGS =" >> ${S}/makekeys/Makefile.am
 	xorg-2_src_prepare
