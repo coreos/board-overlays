@@ -3,8 +3,9 @@
 # $Header: $
 
 EAPI=4
+CROS_WORKON_PROJECT="chromiumos/third_party/wayland"
 
-inherit git autotools toolchain-funcs
+inherit autotools cros-workon toolchain-funcs
 
 DESCRIPTION="Wayland protocol libraries"
 HOMEPAGE="http://wayland.freedesktop.org/"
