@@ -2,21 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=3
+EAPI=4
+CROS_WORKON_PROJECT="chromiumos/third_party/wayland-demos"
+CROS_WORKON_COMMIT="9ef9e0ecf95c575479c8b6a3f1da10ce46575f3c"
 
-EGIT_REPO_URI="http://git.chromium.org/chromiumos/third_party/${PN}.git"
-EGIT_COMMIT="e4fb78de8f087ff8a8991cdaafb73986e170e7bf"
-EGIT_BOOTSTRAP="eautoreconf"
-
-inherit autotools autotools-utils git-2
+inherit autotools autotools-utils cros-workon
 
 DESCRIPTION="demos for wayland the (compositing) display server library"
 HOMEPAGE="http://wayland.freedesktop.org"
-SRC_URI=""
 
 LICENSE="LGPL-2"
 SLOT="0"
-KEYWORDS="~amd64 x86"
+KEYWORDS="amd64 x86"
 IUSE="+poppler +svg +clients +simple-clients
 	+compositor-drm +compositor-x11 +compositor-wayland compositor-openwfd"
 
@@ -63,6 +60,8 @@ src_prepare()
 	sed -i -e "/PROGRAMS/s/noinst/bin/" \
 		{compositor,clients}"/Makefile.am" || \
 		die "sed {compositor,clients}/Makefile.am failed!"
+
+	eautoreconf
 }
 
 pkg_postinst()

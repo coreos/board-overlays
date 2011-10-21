@@ -3,13 +3,13 @@
 # $Header: $
 
 EAPI=4
+CROS_WORKON_PROJECT="chromiumos/third_party/wayland"
+CROS_WORKON_COMMIT="8bc1abd1f569df860700a3c9d3f1f05e76c60ec9"
 
-inherit git autotools toolchain-funcs
+inherit autotools cros-workon toolchain-funcs
 
 DESCRIPTION="Wayland protocol libraries"
 HOMEPAGE="http://wayland.freedesktop.org/"
-EGIT_REPO_URI="http://git.chromium.org/chromiumos/third_party/${PN}.git"
-EGIT_COMMIT="34b26802d710d36224db25a4bb1e9ac5ff1e9843"
 
 LICENSE="CCPL-Attribution-ShareAlike-3.0 MIT"
 SLOT="0"
