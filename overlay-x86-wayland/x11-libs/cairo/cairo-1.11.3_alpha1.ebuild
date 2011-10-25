@@ -4,7 +4,7 @@
 
 EAPI=4
 
-EGIT_REPO_URI="git://anongit.freedesktop.org/git/cairo"
+EGIT_REPO_URI="http://git.chromium.org/chromiumos/third_party/${PN}.git"
 EGIT_COMMIT="f1d313e042af89b2f5f5d09d3eb1703d0517ecd7"
 GIT_ECLASS="git-2"
 

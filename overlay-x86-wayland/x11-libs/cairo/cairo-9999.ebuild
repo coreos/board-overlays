@@ -4,14 +4,13 @@
 
 EAPI=4
 
-EGIT_REPO_URI="git://anongit.freedesktop.org/git/cairo"
-[[ ${PV} == *9999 ]] && GIT_ECLASS="git-2"
+EGIT_REPO_URI="http://git.chromium.org/chromiumos/third_party/${PN}.git"
+GIT_ECLASS="git-2"
 
 inherit eutils flag-o-matic autotools ${GIT_ECLASS}
 
 DESCRIPTION="A vector graphics library with cross-device output support"
 HOMEPAGE="http://cairographics.org/"
-[[ ${PV} == *9999 ]] || SRC_URI="http://cairographics.org/releases/${P}.tar.gz"
 
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
 SLOT="0"
