@@ -10,7 +10,7 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE="tegra-local-bins hardfp"
 
-RDEPEND="chromeos-base/chromeos-init"
+RDEPEND=""
 DEPEND="${RDEPEND}"
 
 if use tegra-local-bins; then
@@ -27,9 +27,6 @@ else
 fi
 
 src_install() {
-	insinto /etc/init
-	doins ${FILESDIR}/etc/init/nvrm.conf			|| die
-
 	insinto /etc/udev/rules.d
 	doins ${FILESDIR}/etc/udev/rules.d/51-nvrm.rules	|| die
 
