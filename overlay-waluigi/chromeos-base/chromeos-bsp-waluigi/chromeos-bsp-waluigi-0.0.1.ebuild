@@ -18,6 +18,7 @@ PROVIDE="virtual/chromeos-bsp"
 
 DEPEND=""
 RDEPEND="
+	chromeos-base/serial-tty
 	tegra3-ldk? (
 		opengles? ( media-libs/openmax )
 		x11-drivers/tegra-drivers
