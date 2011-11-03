@@ -12,7 +12,7 @@ IUSE="tegradbg ath6002 opengles tegra2-ldk"
 
 DEPEND=""
 RDEPEND="chromeos-base/board-devices-private
-	tegradbg? ( chromeos-base/tegra-debug )
+	tegradbg? ( chromeos-base/serial-tty )
 	ath6002? ( net-wireless/ath6002 )
 	tegra2-ldk? (
 		opengles? ( media-libs/openmax )
