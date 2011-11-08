@@ -5,25 +5,30 @@ EAPI=2
 
 inherit cros-binary
 
-DESCRIPTION="OpenMAX binary libraries"
+DESCRIPTION="NVIDIA binary nvrm daemon and libraries for Tegra2"
 SLOT="0"
 KEYWORDS="arm"
 IUSE="tegra-local-bins hardfp"
 
-DEPEND=""
-RDEPEND="sys-apps/nvrm
-	virtual/opengles"
-
+RDEPEND=""
+DEPEND="${RDEPEND}"
 
 if use tegra-local-bins; then
 	URI_BASE="file://"
 else
-	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
+	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private"
 fi
 if use hardfp; then
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-${PV}.tbz2"
-	CROS_BINARY_SUM="f92b167afe934f6b470f8f686b4a9cf45e18ddf7"
+	CROS_BINARY_SUM="9c12a9c06cea82a79907c024c5914c1f77f5d658"
 else
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-	CROS_BINARY_SUM="a90a92eff891d73e085069154a1a04a239a24cad"
+	CROS_BINARY_SUM="cf0eaece8b224ef21c8b648285f283472fd57587"
 fi
+
+src_install() {
+	insinto /etc/udev/rules.d
+	doins ${FILESDIR}/etc/udev/rules.d/51-nvrm.rules	|| die
+
+	cros-binary_src_install
+}

@@ -27,7 +27,7 @@ LDK=`echo "${PV}" | cut -d. -f2-`
 if use tegra-local-bins; then
 	URI_BASE="file://"
 else
-	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private"
+	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private"
 fi
 if use hardfp; then
 	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-abi${ABI}-${LDK}.tbz2"
