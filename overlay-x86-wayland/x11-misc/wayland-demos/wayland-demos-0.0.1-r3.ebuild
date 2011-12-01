@@ -3,7 +3,7 @@
 # $Header: $
 
 EAPI=4
-CROS_WORKON_COMMIT="2459694ab2aeec9f3763719991b934b6edd24ba7"
+CROS_WORKON_COMMIT="f033a7b6e6cb5e9c24897f63a0eeaf4db345d112"
 CROS_WORKON_PROJECT="chromiumos/third_party/wayland-demos"
 
 inherit autotools autotools-utils cros-workon
