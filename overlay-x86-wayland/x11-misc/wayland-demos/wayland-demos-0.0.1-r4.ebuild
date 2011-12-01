@@ -22,6 +22,7 @@ DEPEND="x11-base/wayland
 	x11-libs/pixman
 	x11-libs/libxkbcommon
 	media-libs/libpng
+	|| ( media-libs/libjpeg-turbo media-libs/jpeg )
 	compositor-drm? (
 		>=sys-fs/udev-136
 		>=x11-libs/libdrm-2.4.25
