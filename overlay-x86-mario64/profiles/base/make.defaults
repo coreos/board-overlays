@@ -1,0 +1,2 @@
+U_BOOT_CONFIG_USE="coreboot-x86"
+U_BOOT_FDT_USE="mario"
