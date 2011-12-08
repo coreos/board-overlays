@@ -1,1 +1,1 @@
-U_BOOT_CONFIG_USE="chromeos_tegra2_twostop"
+U_BOOT_CONFIG_USE="seaboard"
