@@ -2,5 +2,8 @@ CTL{reset}="mixer"
 CTL{name}="Speaker Volume", CTL{value}="-9dB,-9dB"
 CTL{name}="Left Speaker Mixer Left DAC1 Switch", CTL{value}="true"
 CTL{name}="Right Speaker Mixer Right DAC1 Switch", CTL{value}="true"
+CTL{name}="Headphone Volume", CTL{value}="-40dB,-40dB"
+CTL{name}="Left Headphone Mixer Left DAC1 Switch", CTL{value}="true"
+CTL{name}="Right Headphone Mixer Right DAC1 Switch", CTL{value}="true"
 
 RESULT="true", EXIT="return"
