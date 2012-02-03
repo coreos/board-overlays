@@ -1,2 +1,2 @@
 chromeos-base/chromeos-chrome          aura aura_demo -autotest -build_tests -chrome_remoting wayland
-media-libs/mesa		gbm gles2
+media-libs/mesa		egl gbm gles2 shared-glapi
