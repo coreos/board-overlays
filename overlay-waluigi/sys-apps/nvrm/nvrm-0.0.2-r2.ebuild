@@ -16,10 +16,10 @@ DEPEND="${RDEPEND}"
 if use tegra-local-bins; then
 	URI_BASE="file://"
 else
-	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private/tegra3"
+	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private/tegra3"
 fi
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${P}.tbz2"
-CROS_BINARY_SUM="efa97915fa2711375dabeb56758b268f6ede48d1"
+CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
+CROS_BINARY_SUM="1b4446b5f9f8773e45ee0556bd41770a8eca1010"
 
 src_install() {
 	insinto /etc/udev/rules.d

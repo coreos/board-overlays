@@ -13,13 +13,13 @@ inherit cros-binary
 
 DESCRIPTION="Tegra3 user-land drivers"
 SLOT="0"
-KEYWORDS="arm"
+KEYWORDS="~arm"
 IUSE="tegra-local-bins"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-        >=x11-base/xorg-server-1.9
-        <x11-base/xorg-server-1.10"
+        >=x11-base/xorg-server-1.10
+        <x11-base/xorg-server-1.11"
 
 ABI=`echo "${PV}" | cut -d. -f1`
 LDK=`echo "${PV}" | cut -d. -f2-`
@@ -27,7 +27,7 @@ LDK=`echo "${PV}" | cut -d. -f2-`
 if use tegra-local-bins; then
 	URI_BASE="file://"
 else
-	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private/tegra3"
+	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private/tegra3"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-CROS_BINARY_SUM="918ee8b0a8c40fca1c862c248c7791cd2a696289"
+CROS_BINARY_SUM="f324c6d4fe47d8dc29507f733eb023aae4846b4c"

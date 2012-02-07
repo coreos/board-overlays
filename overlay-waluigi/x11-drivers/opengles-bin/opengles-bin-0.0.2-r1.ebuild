@@ -18,8 +18,8 @@ RDEPEND="sys-apps/nvrm
 if use tegra-local-bins; then
 	URI_BASE="file://"
 else
-	URI_BASE="ssh://tegra2-private@git.chromium.org:6222/home/tegra2-private/tegra3"
+	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private/tegra3"
 fi
 
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/opengles/opengles-${PV}.tbz2"
-CROS_BINARY_SUM="016a2014ec1198c97f27915bee959aa0927454bb"
+CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
+CROS_BINARY_SUM="127e1be2afe000d47245450ffcfc0c266954b51a"
