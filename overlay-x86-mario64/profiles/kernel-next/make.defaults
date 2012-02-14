@@ -1,2 +1,0 @@
-U_BOOT_CONFIG_USE="coreboot"
-U_BOOT_FDT_USE="mario"
