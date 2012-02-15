@@ -21,9 +21,9 @@ else
 	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private"
 fi
 if use hardfp; then
-	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/opengles/opengles-hardfp-${PV}.tbz2"
-	CROS_BINARY_SUM="23925e57752727642538588023e4d9741c2a6be4"
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/opengles-hardfp-${PVR}.tbz2"
+	CROS_BINARY_SUM="aabbf78b2223996cc54330d2ea196885b68809bc"
 else
-	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/opengles/opengles-bin-${PV}.tbz2"
-	CROS_BINARY_SUM="80c640c44274b4c611738d2fca00d75e618eb2e6"
+	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/opengles-bin-${PVR}.tbz2"
+	CROS_BINARY_SUM="6b766c01ace1ee935a19c6c2b03cf18f66a7edf6"
 fi
