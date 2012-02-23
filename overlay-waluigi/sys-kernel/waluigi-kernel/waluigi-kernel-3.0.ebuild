@@ -8,7 +8,7 @@ EGIT_BRANCH="chromeos-3.0"
 
 # To move up to a new commit, you should update this and then bump the
 # symlink to a new rev.
-EGIT_COMMIT="203dde0a37cca012b857478676bd8ce1ad07c1be"
+EGIT_COMMIT="3bcaa62ff053feb80a36e8bd151b0ff5303b0326"
 
 # This must be inherited *after* EGIT/CROS_WORKON variables defined
 inherit git cros-kernel2
