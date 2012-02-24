@@ -14,4 +14,11 @@ IUSE=""
 PROVIDE="virtual/chromeos-bsp"
 
 DEPEND=""
-RDEPEND=""
+RDEPEND="
+	chromeos-base/serial-sac-tty
+	media-libs/mfc-fw
+	media-libs/openmax
+	sys-boot/exynos-pre-boot
+	x11-drivers/mali-drivers
+	x11-drivers/mali-rules
+"
