@@ -15,7 +15,9 @@ RDEPEND="chromeos-base/board-devices-private
 	tegradbg? ( chromeos-base/serial-tty )
 	ath6002? ( net-wireless/ath6002 )
 	tegra2-ldk? (
-		opengles? ( media-libs/openmax )
+		opengles? (
+			media-libs/openmax
+			media-libs/openmax-codecs )
 		x11-drivers/tegra-drivers
 	)
 	"

@@ -14,7 +14,7 @@ inherit cros-binary
 DESCRIPTION="Tegra2 user-land drivers"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="tegra-local-bins hardfp"
+LICENSE="NVIDIA"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
@@ -22,17 +22,16 @@ RDEPEND="sys-apps/nvrm
         <x11-base/xorg-server-1.10"
 
 ABI=`echo "${PV}" | cut -d. -f1`
-LDK=`echo "${PV}" | cut -d. -f2-`
 
-if use tegra-local-bins; then
-	URI_BASE="file://"
-else
-	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private"
-fi
-if use hardfp; then
-	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-hardfp-abi${ABI}-${LDK}.tbz2"
-	CROS_BINARY_SUM="97fe9a05425108bfebc5494bdb4f71325dbbbd9f"
-else
-	CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PN}-abi${ABI}-${LDK}.tbz2"
-	CROS_BINARY_SUM="7734afaf82648813c25a57c67e4b3a4feeca55ec"
-fi
+URI_BASE=${BCS_URI_BASE:="http://developer.download.nvidia.com/assets/tools/files"}
+CROS_BINARY_URI="$URI_BASE/l4t/ventana_Tegra-Linux-R12.beta.1.0.tbz2"
+CROS_BINARY_SUM="67144b1ef95febbe736f88c8b2b2ad6ad09d6913"
+
+src_install() {
+	local target="${CROS_BINARY_STORE_DIR}/${CROS_BINARY_URI##*/}"
+	tar xpjf "${target}" -C "${T}" || die "Failed to unpack ${target}"
+
+	insinto /usr/lib/xorg/modules/drivers
+	newins ${T}/Linux_for_Tegra/nv_tegra/x/tegra_drv.abi${ABI}.so tegra_drv.so	|| die
+	fperms 0644 /usr/lib/xorg/modules/drivers/tegra_drv.so	      			|| die
+}
