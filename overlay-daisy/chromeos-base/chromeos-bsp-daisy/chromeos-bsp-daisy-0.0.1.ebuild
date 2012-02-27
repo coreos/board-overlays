@@ -19,6 +19,7 @@ RDEPEND="
 	media-libs/mfc-fw
 	media-libs/openmax
 	sys-boot/exynos-pre-boot
+	sys-kernel/exynos-kernel
 	x11-drivers/mali-drivers
 	x11-drivers/mali-rules
 "
