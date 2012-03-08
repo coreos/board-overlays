@@ -19,7 +19,7 @@ else
 	URI_BASE="ssh://bcs-tegra2-private@git.chromium.org:6222/overlay-tegra2-private/tegra3"
 fi
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
-CROS_BINARY_SUM="1b4446b5f9f8773e45ee0556bd41770a8eca1010"
+CROS_BINARY_SUM="edabad6fedf40bccbe40740e08312eee9c340906"
 
 src_install() {
 	insinto /etc/udev/rules.d
