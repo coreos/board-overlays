@@ -23,6 +23,7 @@ RDEPEND="
 		opengles? ( media-libs/openmax )
 		x11-drivers/tegra-drivers
 	)
+	sys-boot/tegra-bct-waluigi
 "
 
 src_install() {
