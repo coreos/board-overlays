@@ -14,7 +14,9 @@ DEPEND=""
 RDEPEND=""
 
 URI_BASE="ssh://bcs-ironhide-private@git.chromium.org:6222/overlay-ironhide-private"
-BINARY_TAR_FILE="${PF}.tbz2"
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${BINARY_TAR_FILE}"
+CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
 CROS_BINARY_SUM="59aabfc4deb2a57d2b0ac332b9c608b6f266a00a"
 CROS_BINARY_INSTALL_FLAGS="--strip-components=1"
+
+# The tbz2 file contains the following:
+# exynos-pre-boot/firmware/E5250.nbl1.bin
