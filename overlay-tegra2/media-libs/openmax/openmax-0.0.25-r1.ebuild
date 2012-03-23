@@ -1,19 +1,22 @@
 # Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=2
+EAPI=4
 
 inherit cros-binary
 
-DESCRIPTION="NVIDIA binary OpenGL|ES libraries for Tegra2"
+DESCRIPTION="OpenMAX binary libraries"
 SLOT="0"
 KEYWORDS="arm"
 LICENSE="NVIDIA"
 
+IUSE="hardfp"
+REQUIRED_USE="!hardfp"
+
 DEPEND=""
-RDEPEND="sys-apps/nvrm
-	x11-drivers/opengles-headers
-	!x11-drivers/opengles"
+RDEPEND="=sys-apps/nvrm-0.0.25*
+	media-libs/openmax-codecs
+	virtual/opengles"
 
 URI_BASE=${BCS_URI_BASE:="http://developer.download.nvidia.com/assets/tools/files"}
 CROS_BINARY_URI="$URI_BASE/l4t/ventana_Tegra-Linux-R12.beta.1.0.tbz2"
@@ -24,12 +27,7 @@ src_install() {
 	tar xpjf "${target}" -C "${T}" || die "Failed to unpack ${target}"
 	tar xpzf "${T}/Linux_for_Tegra/nv_tegra/base.tgz" -C "${T}" || die "Failed to unpack base"
 
-	insinto /usr/lib
-	newins ${T}/usr/lib/libEGL.so libEGL.so.1	  	|| die
-	fperms 0755 /usr/lib/libEGL.so.1			|| die
-	dosym libEGL.so.1 /usr/lib/libEGL.so			|| die
-
-	newins ${T}/usr/lib/libGLESv2.so libGLESv2.so.2	  	|| die
-	fperms 0755 /usr/lib/libGLESv2.so.2			|| die
-	dosym libGLESv2.so.2 /usr/lib/libGLESv2.so		|| die
+	dolib.so ${T}/usr/lib/libnvomxilclient.so	  	|| die
+	dolib.so ${T}/usr/lib/libnvomx.so			|| die
+	dosym libnvomx.so /usr/lib/libOmxCore.so		|| die
 }
