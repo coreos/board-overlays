@@ -7,7 +7,7 @@
 # example, the X driver for xserver 1.9 (which uses ABI version 8) from LDK
 # version 1.2.3 would be tegra-drivers-8.1.2.3.
 
-EAPI=4
+EAPI=2
 
 inherit cros-binary
 
@@ -15,9 +15,6 @@ DESCRIPTION="Tegra2 user-land drivers"
 SLOT="0"
 KEYWORDS="arm"
 LICENSE="NVIDIA"
-
-IUSE="hardfp"
-REQUIRED_USE="!hardfp"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm

@@ -1,7 +1,7 @@
 # Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=4
+EAPI=2
 
 inherit cros-binary
 
@@ -9,9 +9,6 @@ DESCRIPTION="NVIDIA binary nvrm daemon and libraries for Tegra2"
 SLOT="0"
 KEYWORDS="arm"
 LICENSE="NVIDIA"
-
-IUSE="hardfp"
-REQUIRED_USE="!hardfp"
 
 RDEPEND=""
 DEPEND="${RDEPEND}"
