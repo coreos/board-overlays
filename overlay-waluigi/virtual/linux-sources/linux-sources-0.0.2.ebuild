@@ -28,6 +28,5 @@ IUSE="-kernel_next -kernel_sources"
 # You can switch back with: cros_choose_profile --board=waluigi --profile=base
 
 RDEPEND="
-	kernel_next? ( sys-kernel/chromeos-kernel-next[kernel_sources=] )
-	!kernel_next? ( sys-kernel/waluigi-kernel[kernel_sources=] )
+	sys-kernel/waluigi-kernel[kernel_sources=]
 "
