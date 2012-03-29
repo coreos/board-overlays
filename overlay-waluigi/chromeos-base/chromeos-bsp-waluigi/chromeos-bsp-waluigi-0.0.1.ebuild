@@ -24,3 +24,9 @@ RDEPEND="
 		x11-drivers/tegra-drivers
 	)
 "
+
+src_install() {
+	# Override default CPU clock speed governor
+	insinto "/etc/laptop-mode/conf.d/board-specific"
+	doins "${FILESDIR}/cpufreq.conf" || die "installation failed ($?)"
+}
