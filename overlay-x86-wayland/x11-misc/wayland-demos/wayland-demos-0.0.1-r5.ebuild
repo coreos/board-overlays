@@ -1,9 +1,10 @@
 # Copyright 1999-2010 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
+CROS_WORKON_COMMIT="f033a7b6e6cb5e9c24897f63a0eeaf4db345d112"
+CROS_WORKON_TREE="c8c11d8a790912c888d5a7b97867b4c3959dcd7b"
 
 EAPI=4
-CROS_WORKON_COMMIT="f033a7b6e6cb5e9c24897f63a0eeaf4db345d112"
 CROS_WORKON_PROJECT="chromiumos/third_party/wayland-demos"
 
 inherit autotools autotools-utils cros-workon
