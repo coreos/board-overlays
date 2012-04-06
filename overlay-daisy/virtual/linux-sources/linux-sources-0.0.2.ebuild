@@ -12,5 +12,5 @@ KEYWORDS="amd64 arm x86"
 IUSE="-kernel_next -kernel_sources"
 
 RDEPEND="
-	sys-kernel/exynos-kernel[kernel_sources=]
+	sys-kernel/chromeos-kernel-exynos[kernel_sources=]
 "
