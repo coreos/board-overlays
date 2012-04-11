@@ -20,6 +20,6 @@ RDEPEND="
 	media-libs/openmax
 	sys-boot/exynos-pre-boot
 	sys-kernel/chromeos-kernel-exynos
-	x11-drivers/mali-drivers
+	media-libs/mali-drivers
 	x11-drivers/mali-rules
 "

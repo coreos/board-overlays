@@ -6,6 +6,7 @@ SRC_URI=""
 
 SLOT="0"
 KEYWORDS="arm"
+IUSE=""
 
-RDEPEND="x11-drivers/opengles-bin"
+RDEPEND="|| ( media-libs/mali-drivers x11-drivers/opengles )"
 DEPEND=""
