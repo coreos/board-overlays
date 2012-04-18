@@ -15,7 +15,7 @@ RDEPEND=""
 
 URI_BASE="ssh://bcs-ironhide-private@git.chromium.org:6222/overlay-ironhide-private"
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
-CROS_BINARY_SUM="5a2a5cdf2c8e87404e867b036f831e7175aa6637"
+CROS_BINARY_SUM="559ce56830a49443a828d29c42970d1e1819f9df"
 CROS_BINARY_INSTALL_FLAGS="--strip-components=1"
 
 # The tbz2 file contains the following:
