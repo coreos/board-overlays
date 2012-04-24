@@ -10,7 +10,7 @@ DESCRIPTION="Waluigi bsp (meta package to pull in driver/tool dependencies)"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="opengles tegra3-ldk"
+IUSE="opengles tegra-ldk"
 PROVIDE="virtual/chromeos-bsp"
 
 # TODO(dianders):
@@ -19,7 +19,7 @@ PROVIDE="virtual/chromeos-bsp"
 DEPEND=""
 RDEPEND="
 	chromeos-base/serial-tty
-	tegra3-ldk? (
+	tegra-ldk? (
 		opengles? ( media-libs/openmax )
 		x11-drivers/tegra-drivers
 	)
