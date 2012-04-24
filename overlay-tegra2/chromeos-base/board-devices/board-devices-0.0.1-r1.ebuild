@@ -8,13 +8,13 @@ DESCRIPTION="Tegra2 (meta package)"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE="tegradbg ath6002 opengles tegra2-ldk hardfp"
+IUSE="tegradbg ath6002 opengles tegra-ldk hardfp"
 
 DEPEND=""
 RDEPEND="chromeos-base/board-devices-private
 	tegradbg? ( chromeos-base/serial-tty )
 	ath6002? ( net-wireless/ath6002 )
-	tegra2-ldk? (
+	tegra-ldk? (
 		opengles? (
 			hardfp? ( =media-libs/openmax-0.0.24* )
 			!hardfp? ( media-libs/openmax )
