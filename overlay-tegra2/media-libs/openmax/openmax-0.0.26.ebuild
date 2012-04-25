@@ -11,12 +11,12 @@ KEYWORDS="arm"
 LICENSE="NVIDIA"
 
 DEPEND=""
-RDEPEND="=sys-apps/nvrm-0.0.25*
+RDEPEND="=sys-apps/nvrm-0.0.26*
 	media-libs/openmax-codecs
 	virtual/opengles"
 
-CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/ventana_Tegra-Linux-R12.beta.1.0.tbz2"
-CROS_BINARY_SUM="67144b1ef95febbe736f88c8b2b2ad6ad09d6913"
+CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/r15_beta/ventana_Tegra-Linux-R15.beta.1.0_armel.tbz2"
+CROS_BINARY_SUM="93a2024b554b13cbf12218301c7652091de0aea3"
 
 src_install() {
 	local target="${CROS_BINARY_STORE_DIR}/${CROS_BINARY_URI##*/}"

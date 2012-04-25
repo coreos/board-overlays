@@ -13,18 +13,18 @@ inherit cros-binary
 
 DESCRIPTION="Tegra2 user-land drivers"
 SLOT="0"
-KEYWORDS="~arm"
+KEYWORDS="arm"
 LICENSE="NVIDIA"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
-        >=x11-base/xorg-server-1.10
-        <x11-base/xorg-server-1.11"
+        >=x11-base/xorg-server-1.9
+        <x11-base/xorg-server-1.10"
 
 ABI=`echo "${PV}" | cut -d. -f1`
 
-CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/ventana_Tegra-Linux-R12.beta.1.0.tbz2"
-CROS_BINARY_SUM="67144b1ef95febbe736f88c8b2b2ad6ad09d6913"
+CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/r15_beta/ventana_Tegra-Linux-R15.beta.1.0_armel.tbz2"
+CROS_BINARY_SUM="93a2024b554b13cbf12218301c7652091de0aea3"
 
 src_install() {
 	local target="${CROS_BINARY_STORE_DIR}/${CROS_BINARY_URI##*/}"
@@ -34,4 +34,3 @@ src_install() {
 	newins ${T}/Linux_for_Tegra/nv_tegra/x/tegra_drv.abi${ABI}.so tegra_drv.so	|| die
 	fperms 0644 /usr/lib/xorg/modules/drivers/tegra_drv.so	      			|| die
 }
-

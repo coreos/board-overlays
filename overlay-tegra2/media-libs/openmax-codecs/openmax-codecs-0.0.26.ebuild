@@ -13,13 +13,21 @@ LICENSE="NVIDIA-codecs"
 RDEPEND=""
 DEPEND="${RDEPEND}"
 
-CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/ventana_Tegra-Linux-codecs-R12.beta.1.0.tbz2"
-CROS_BINARY_SUM="4f958b45e21318e568f07d8d042f5c99e19b4062"
+CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/r15_beta/ventana_Tegra-Linux-codecs-R15.beta.1.0_armel.tar.gz"
+CROS_BINARY_SUM="902ff6ac4a16b08f6560632a66816c9c50d1f98b"
 
 src_install() {
 	local target="${CROS_BINARY_STORE_DIR}/${CROS_BINARY_URI##*/}"
-	tar xpjf "${target}" -C "${T}" || die "Failed to unpack ${target}"
-	tar xpjf "${T}/restricted_codecs.tbz2" -C "${T}" || die "Failed to unpack restricted_codecs"
+	local flags
+
+	case "${target##*.}" in
+		gz|tgz) flags="z";;
+		bz2|tbz2) flags="j";;
+		*) die "Unsupported binary file format ${target##*.}"
+	esac
+
+	tar "${flags}xpf" "${target}" -C "${T}" || die "Failed to unpack ${target}"
+	tar "jxpf" "${T}/restricted_codecs.tbz2" -C "${T}" || die "Failed to unpack restricted_codecs"
 
 	insinto /lib/firmware
 	local fw_files="\
@@ -32,7 +40,6 @@ src_install() {
 	      nvmm_manager.axf \
 	      nvmm_mp3dec.axf \
 	      nvmm_mpeg4dec.axf \
-	      nvmm_reference.axf \
 	      nvmm_service.axf \
 	      nvmm_wavdec.axf \
 	      "
