@@ -1,29 +1,20 @@
 # Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
-# Copyright (c) 2011 NVIDIA Corporation
 # Distributed under the terms of the GNU General Public License v2
-
-# The package version (i.e. ${PV}) represents the video driver ABI version of
-# the server, plus the version of the LDK that the driver comes from.  For
-# example, the X driver for xserver 1.9 (which uses ABI version 8) from LDK
-# version 1.2.3 would be tegra-drivers-8.1.2.3.
 
 EAPI=2
 
 inherit cros-binary
 
-DESCRIPTION="Tegra2 user-land drivers"
+DESCRIPTION="OpenMAX binary libraries"
 SLOT="0"
 KEYWORDS="arm"
 IUSE="hardfp"
 LICENSE="NVIDIA"
 
 DEPEND=""
-RDEPEND="sys-apps/nvrm
-        >=x11-base/xorg-server-1.12
-        <x11-base/xorg-server-1.13"
-
-ABI=`echo "${PV}" | cut -d. -f1`
-
+RDEPEND="=sys-apps/nvrm-0.0.26*
+	media-libs/openmax-codecs
+	virtual/opengles"
 
 src_unpack() {
 	if use hardfp; then
@@ -39,17 +30,13 @@ src_unpack() {
 src_install() {
 	local target="${CROS_BINARY_STORE_DIR}/${CROS_BINARY_URI##*/}"
 	tar xpjf "${target}" -C "${T}" || die "Failed to unpack ${target}"
-
 	if use hardfp; then
 		tar xpzf "${T}/base.tgz" -C "${T}" || die "Failed to unpack base"
-
-		insinto /usr/lib/xorg/modules/drivers
-		newins ${T}/usr/lib/xorg/modules/drivers/tegra_drv.abi${ABI}.so tegra_drv.so	|| die
 	else
-		insinto /usr/lib/xorg/modules/drivers
-		newins ${T}/Linux_for_Tegra/nv_tegra/x/tegra_drv.abi${ABI}.so tegra_drv.so	|| die
+		tar xpzf "${T}/Linux_for_Tegra/nv_tegra/base.tgz" -C "${T}" || die "Failed to unpack base"
 	fi
 
-	fperms 0644 /usr/lib/xorg/modules/drivers/tegra_drv.so	      			|| die
-
+	dolib.so ${T}/usr/lib/libnvomxilclient.so	  	|| die
+	dolib.so ${T}/usr/lib/libnvomx.so			|| die
+	dosym libnvomx.so /usr/lib/libOmxCore.so		|| die
 }

@@ -19,7 +19,7 @@ RDEPEND="sys-apps/nvrm
 
 src_unpack() {
 	if use hardfp; then
-		CROS_BINARY_URI="http://developer.nvidia.com/sites/default/files/akamai/mobile/files/l4t/ventana_nv-tegra_base_R15-Beta.1.0_armhf.tbz2"
+		CROS_BINARY_URI="http://developer.download.nvidia.com/assets/mobile/files/l4t/ventana_nv-tegra_base_R15-Beta.1.0_armhf.tbz2"
 		CROS_BINARY_SUM="782dec54c15138456496aac6db050469d4befa28"
 	else
 		CROS_BINARY_URI="http://developer.download.nvidia.com/assets/tools/files/l4t/r15_beta/ventana_Tegra-Linux-R15.beta.1.0_armel.tbz2"

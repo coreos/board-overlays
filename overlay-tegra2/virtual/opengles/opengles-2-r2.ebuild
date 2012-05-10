@@ -6,13 +6,12 @@ SRC_URI=""
 
 SLOT="0"
 KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 sh sparc x86 ~x86-fbsd"
-IUSE="tegra-ldk hardfp"
+IUSE="tegra-ldk"
 
 RDEPEND="
 	!tegra-ldk? ( x11-drivers/opengles )
 	tegra-ldk? (
-		!hardfp? ( x11-drivers/opengles-bin )
-		hardfp? ( =x11-drivers/opengles-bin-0.0.24* )
+		x11-drivers/opengles-bin
 	)
 	"
 DEPEND=""
