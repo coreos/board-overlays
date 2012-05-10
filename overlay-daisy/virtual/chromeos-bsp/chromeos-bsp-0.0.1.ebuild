@@ -3,14 +3,11 @@
 
 EAPI=2
 
-DESCRIPTION="Chrome OS Kernel virtual package"
+DESCRIPTION="Chrome OS BSP virtual package"
 HOMEPAGE="http://src.chromium.org"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
-IUSE="-kernel_next -kernel_sources"
+KEYWORDS="arm"
 
-RDEPEND="
-	sys-kernel/chromeos-kernel-exynos[kernel_sources=]
-"
+RDEPEND="chromeos-base/chromeos-bsp-daisy"

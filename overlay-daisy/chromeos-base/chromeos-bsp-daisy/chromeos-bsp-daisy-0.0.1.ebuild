@@ -5,7 +5,7 @@ EAPI=2
 
 inherit toolchain-funcs
 
-DESCRIPTION="Daisy bsp (meta package to pull in driver/tool dependencies)"
+DESCRIPTION="Daisy public bsp (meta package to pull in driver/tool dependencies)"
 
 LICENSE="BSD"
 SLOT="0"
@@ -16,10 +16,5 @@ PROVIDE="virtual/chromeos-bsp"
 DEPEND=""
 RDEPEND="
 	chromeos-base/serial-tty
-	media-libs/mfc-fw
-	media-libs/openmax
 	sys-boot/exynos-pre-boot
-	sys-kernel/chromeos-kernel-exynos
-	media-libs/mali-drivers
-	x11-drivers/mali-rules
 "
