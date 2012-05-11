@@ -14,7 +14,7 @@ DEPEND=""
 RDEPEND="!chromeos-base/exynos-omx
 	${DEPEND}"
 
-URI_BASE="ssh://bcs-ironhide-private@git.chromium.org:6222/overlay-ironhide-private"
+URI_BASE="ssh://bcs-daisy-private@git.chromium.org:6222/overlay-daisy-private"
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
 CROS_BINARY_SUM="bdc43401656937af418aee764b099eb71ff4fbed"
 CROS_BINARY_INSTALL_FLAGS="--strip-components=1"

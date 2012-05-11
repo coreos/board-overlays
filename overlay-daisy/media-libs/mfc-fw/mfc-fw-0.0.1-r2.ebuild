@@ -5,18 +5,18 @@ EAPI=2
 
 inherit cros-binary
 
-DESCRIPTION="Binary pre-bootloader for ironhide"
+DESCRIPTION="Multi-Format Codec Firmware Binary for Exynos5"
 SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
 DEPEND=""
-RDEPEND=""
+RDEPEND="${DEPEND}"
 
-URI_BASE="ssh://bcs-ironhide-private@git.chromium.org:6222/overlay-ironhide-private"
+URI_BASE="ssh://bcs-daisy-private@git.chromium.org:6222/overlay-daisy-private"
 CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
-CROS_BINARY_SUM="559ce56830a49443a828d29c42970d1e1819f9df"
+CROS_BINARY_SUM="13707bfb5ba05a7632447f6947dc327c583a6865"
 CROS_BINARY_INSTALL_FLAGS="--strip-components=1"
 
 # The tbz2 file contains the following:
-# exynos-pre-boot/firmware/E5250.nbl1.bin
+# mfc-fw/lib/firmware/mfc_fw.bin
