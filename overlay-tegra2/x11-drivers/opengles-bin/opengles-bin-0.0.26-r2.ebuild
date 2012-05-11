@@ -1,21 +1,24 @@
-# Copyright (c) 2010 The Chromium OS Authors. All rights reserved.
+# Copyright (c) 2012 The Chromium OS Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=2
+EAPI="4"
 
 inherit cros-binary
 
 DESCRIPTION="NVIDIA binary OpenGL|ES libraries for Tegra2"
+HOMEPAGE="http://developer.nvidia.com/linux-tegra"
+
+LICENSE="NVIDIA"
 SLOT="0"
 KEYWORDS="arm"
 IUSE="hardfp"
-LICENSE="NVIDIA"
 
 DEPEND=""
 RDEPEND="sys-apps/nvrm
 	x11-drivers/opengles-headers
 	!x11-drivers/opengles"
 
+S=${WORKDIR}
 
 src_unpack() {
 	if use hardfp; then
@@ -26,24 +29,18 @@ src_unpack() {
 		CROS_BINARY_SUM="93a2024b554b13cbf12218301c7652091de0aea3"
 	fi
 	cros-binary_src_unpack
+
+	local pkg=${CROS_BINARY_URI##*/}
+	ln -s "${CROS_BINARY_STORE_DIR}/${pkg}"
+	unpack ./${pkg}
+	# Tarballs all the way down!
+	unpack $(find -name base.tgz)
 }
 
 src_install() {
-	local target="${CROS_BINARY_STORE_DIR}/${CROS_BINARY_URI##*/}"
-	tar xpjf "${target}" -C "${T}" || die "Failed to unpack ${target}"
+	newlib.so usr/lib/libEGL.so libEGL.so.1
+	dosym libEGL.so.1 /usr/lib/libEGL.so
 
-	if use hardfp; then
-		tar xpzf "${T}/base.tgz" -C "${T}" || die "Failed to unpack base"
-	else
-		tar xpzf "${T}/Linux_for_Tegra/nv_tegra/base.tgz" -C "${T}" || die "Failed to unpack base"
-	fi
-
-	insinto /usr/lib
-	newins ${T}/usr/lib/libEGL.so libEGL.so.1	  	|| die
-	fperms 0755 /usr/lib/libEGL.so.1			|| die
-	dosym libEGL.so.1 /usr/lib/libEGL.so			|| die
-
-	newins ${T}/usr/lib/libGLESv2.so libGLESv2.so.2	  	|| die
-	fperms 0755 /usr/lib/libGLESv2.so.2			|| die
-	dosym libGLESv2.so.2 /usr/lib/libGLESv2.so		|| die
+	newlib.so usr/lib/libGLESv2.so libGLESv2.so.2
+	dosym libGLESv2.so.2 /usr/lib/libGLESv2.so
 }
