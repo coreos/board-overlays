@@ -16,5 +16,7 @@ PROVIDE="virtual/chromeos-bsp"
 DEPEND=""
 RDEPEND="
 	chromeos-base/serial-tty
+	media-libs/mfc-fw
+	media-libs/openmax
 	sys-boot/exynos-pre-boot
 "

@@ -13,8 +13,8 @@ IUSE=""
 DEPEND=""
 RDEPEND=""
 
-URI_BASE="ssh://bcs-daisy-private@git.chromium.org:6222/overlay-daisy-private"
-CROS_BINARY_URI="${URI_BASE}/${CATEGORY}/${PN}/${PF}.tbz2"
+URI_BASE="http://commondatastorage.googleapis.com/chromeos-localmirror/distfiles"
+CROS_BINARY_URI="${URI_BASE}/${PF}.tbz2"
 CROS_BINARY_SUM="9f33f1bb2bf57db5caf8f031bb7684ee9320aee8"
 CROS_BINARY_INSTALL_FLAGS="--strip-components=1"
 
