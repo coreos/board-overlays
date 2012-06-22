@@ -20,3 +20,15 @@ CROS_BINARY_INSTALL_FLAGS="--strip-components=1"
 
 # The tbz2 file contains the following:
 # mfc-fw/lib/firmware/mfc_fw.bin
+
+# Workaround bad permissions in tarball for /lib/firmware
+# TODO(crosbug.com/p/10579): remove workaround when no longer needed
+src_install() {
+	cros-binary_src_install
+	fperms 0755 /lib/firmware
+}
+
+# Hack to fix broken chroots
+pkg_postinst() {
+	chmod 0755 "${ROOT}/lib/firmware"
+}
