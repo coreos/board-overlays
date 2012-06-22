@@ -16,6 +16,7 @@ PROVIDE="virtual/chromeos-bsp"
 DEPEND=""
 RDEPEND="
 	chromeos-base/serial-tty
+	media-libs/media-rules
 	media-libs/mfc-fw
 	sys-boot/exynos-pre-boot
 	x11-drivers/xf86-video-armsoc

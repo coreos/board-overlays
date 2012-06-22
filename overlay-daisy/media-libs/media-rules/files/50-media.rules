@@ -1,0 +1,6 @@
+ATTR{name}=="s5p-mfc-dec", NAME="mfc-dec"
+ATTR{name}=="s5p-mfc-enc", NAME="mfc-enc"
+ATTR{name}=="exynos-gsc.0*", NAME="gsc0"
+ATTR{name}=="exynos-gsc.1*", NAME="gsc1"
+ATTR{name}=="exynos-gsc.2*", NAME="gsc2"
+ATTR{name}=="exynos-gsc.3*", NAME="gsc3"
