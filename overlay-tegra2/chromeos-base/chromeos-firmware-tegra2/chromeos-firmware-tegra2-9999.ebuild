@@ -32,5 +32,11 @@ CROS_FIRMWARE_SCRIPT="updater3.sh"
 CROS_FIRMWARE_UNSTABLE="TRUE"
 
 # System firmware image.
-CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/firmware/image.bin"
+CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/firmware/image-${BOARD_NAME}.bin"
+
+# TODO(sjg@chromium.org): Remove this when this change goes in:
+# https://gerrit.chromium.org/gerrit/25151
+if [ ! -r "${CROS_FIRMWARE_MAIN_IMAGE}" ]; then
+	CROS_FIRMWARE_MAIN_IMAGE="${ROOT}/firmware/image.bin"
+fi
 CROS_FIRMWARE_EXTRA_LIST="${FILESDIR}/extra"
