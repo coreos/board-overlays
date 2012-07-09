@@ -10,12 +10,13 @@ DESCRIPTION="Daisy public bsp (meta package to pull in driver/tool dependencies)
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE=""
+IUSE="gobi"
 PROVIDE="virtual/chromeos-bsp"
 
 DEPEND=""
 RDEPEND="
 	chromeos-base/serial-tty
+	gobi? ( chromeos-base/gobi-cromo-plugin )
 	media-libs/media-rules
 	media-libs/mfc-fw
 	sys-boot/exynos-pre-boot
