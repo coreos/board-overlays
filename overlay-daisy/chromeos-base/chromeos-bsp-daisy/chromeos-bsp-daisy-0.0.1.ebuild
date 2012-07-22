@@ -21,3 +21,9 @@ RDEPEND="
 	sys-boot/exynos-pre-boot
 	x11-drivers/xf86-video-armsoc
 "
+
+src_install() {
+	# Install platform specific config file for power_manager
+	insinto "/usr/share/power_manager"
+	doins "${FILESDIR}/wakeup_input_device_names" || die "installation failed ($?)"
+}
