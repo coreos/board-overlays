@@ -10,7 +10,7 @@ DESCRIPTION="Daisy public bsp (meta package to pull in driver/tool dependencies)
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="arm"
-IUSE=""
+IUSE="-samsung_serial"
 PROVIDE="virtual/chromeos-bsp"
 
 DEPEND=""
