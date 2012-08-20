@@ -18,26 +18,49 @@ are added if they exist:
 of --board is supplied to setup_board then the primary variant overlay must
 exist.
 
-    All overlays and variants should contain a make.conf.  If this file exists
-it will be sourced in the order that the overlays and variants are listed above.
+    All overlays (including variants) should contain a make.conf.  If this file
+exists it will be sourced in the order that the overlays and variants are
+listed above.
 
     The board and variant names can not have underscores or spaces in them.
 
 
-REPO_NAME and LAYOUT.CONF
--------------------------
-    All overlays and variants must contain a profiles directory with a
-repo_name file therein.  Overlays and variants should also contain a metadata
-directory with a layout.conf file therein.
+PROFILES
+--------
+    All overlays must contain a profiles directory with a repo_name file
+therein.  The repo_name file provides a unique name Portage uses to identify
+each overlay or variant.
 
-    The repo_name file is used to give each overlay or variant a unique name
-that is used by portage to identify said overlay or variant.  
+    Overlays and variants can also contain named profiles as subdirectories of
+the profiles directory.  If the board overlay contains a "base" profile,
+Portage will use that by default for the board; otherwise, Portage will use a
+profile from chromiumos-overlay.
 
-    The layout.conf file specifies the "masters" list.  This is a list of
-repository names (taken from the repo_name files in the overlays).  This list
-is used to dissambiguate the selection of ebuilds.  When two overlays supply
-the same ebuild the overlay who's repo_name is listed later in the masters list
-will be used.  The masters list also effects the way that portage searches for
+    Within a profile, a board overlay will most commonly want to specify
+package-specific USE flags via package.use, mask or unmask package versions via
+package.mask and package.unmask, or mask or unmask keywords via
+package.keywords.  See "man portage" in the chroot for full details on those
+and other files that can appear in a profile.
+
+    Profiles in a board overlay must have a file "parent", containing the full
+path of one of the profiles from chromiumos-overlay, as seen from the build
+chroot; /usr/local/portage/chromiumos/profiles in the chroot maps to
+src/third_party/chromiumos-overlay/profiles in the source tree.  The parent
+must point to an architecture-appropriate profile, typically
+/usr/local/portage/chromiumos/profiles/default/linux/$arch/$version/chromeos.
+Profiles can use another profile from the same board as their parent, as long
+as the chain of parent profiles eventually leads to an architecture-appropriate
+profile from chromiumos-overlay.
+
+
+LAYOUT.CONF
+-----------
+    Overlays should contain a metadata directory with a layout.conf file
+therein.  The layout.conf file specifies the "masters" list.  This is a list of
+repository names, taken from the repo_name files in the overlays.  This list
+disambiguates the selection of ebuilds.  When two overlays supply the same
+ebuild the overlay who's repo_name is listed later in the masters list will be
+used.  The masters list also effects the way that portage searches for
 eclasses.  By having the repo_name "chromiumos" as the last entry in the
 masters list portage will correctly find the chromiumos specific eclasses.
 
