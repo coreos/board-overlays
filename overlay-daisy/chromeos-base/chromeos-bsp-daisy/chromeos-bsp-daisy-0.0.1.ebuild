@@ -15,6 +15,7 @@ PROVIDE="virtual/chromeos-bsp"
 
 DEPEND=""
 RDEPEND="
+	!<chromeos-base/chromeos-bsp-daisy-private-0.0.1-r11
 	samsung_serial? ( chromeos-base/serial-tty )
 	media-libs/media-rules
 	media-libs/mfc-fw
@@ -26,4 +27,9 @@ src_install() {
 	# Install platform specific config file for power_manager
 	insinto "/usr/share/power_manager"
 	doins "${FILESDIR}/wakeup_input_device_names" || die "installation failed ($?)"
+
+	# Install platform specific usb device list for laptop mode tools
+	insinto "/etc/laptop-mode/conf.d/board-specific"
+	doins "${FILESDIR}/usb-autosuspend.conf" || die "installation failed ($?)"
+	doins "${FILESDIR}/cpufreq.conf" || die "installation failed ($?)"
 }
