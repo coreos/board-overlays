@@ -52,6 +52,9 @@ Profiles can use another profile from the same board as their parent, as long
 as the chain of parent profiles eventually leads to an architecture-appropriate
 profile from chromiumos-overlay.
 
+    Adding a base profile to a board overlay that did not previously have a
+profile will require re-running setup_board with --force.
+
 
 LAYOUT.CONF
 -----------
