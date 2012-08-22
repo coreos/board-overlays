@@ -70,7 +70,7 @@ LAYOUT.CONF
 therein.  The layout.conf file specifies the "masters" list.  This is a list of
 repository names, taken from the repo_name files in the overlays.  This list
 disambiguates the selection of ebuilds.  When two overlays supply the same
-ebuild the overlay who's repo_name is listed later in the masters list will be
+ebuild the overlay whose repo_name is listed later in the masters list will be
 used.  The masters list also effects the way that portage searches for
 eclasses.  By having the repo_name "chromiumos" as the last entry in the
 masters list portage will correctly find the chromiumos specific eclasses.
