@@ -18,9 +18,17 @@ are added if they exist:
 of --board is supplied to setup_board then the primary variant overlay must
 exist.
 
-    All overlays (including variants) should contain a make.conf.  If this file
-exists it will be sourced in the order that the overlays and variants are
-listed above.
+    A private board overlay can augment an existing non-private board overlay,
+or can serve as the primary board overlay for a board with no non-private board
+overlay.
+
+    All board overlays (including variants) should contain a make.conf.  If
+this file exists it will be sourced in the order that the overlays and variants
+are listed above.
+
+    All board overlays should contain a toolchain.conf, specifying the
+toolchains required to build that board.  Variants can inherit toolchain.conf
+from their primary board overlay.
 
     The board and variant names can not have underscores or spaces in them.
 
@@ -68,21 +76,22 @@ eclasses.  By having the repo_name "chromiumos" as the last entry in the
 masters list portage will correctly find the chromiumos specific eclasses.
 
 
-PRIMARY BOARD OVERLAY
----------------------
-    Each board must have a primary board overlay containing make.conf and a
-toolchain.conf file.
+BOARD-SPECIFIC PACKAGES
+-----------------------
+    A board overlay will typically want to provide additional packages to
+install.  ChromiumOS builds install the chromeos/chromeos package by default,
+whose RDEPEND brings in all the packages installed by default.
+chromeos/chromeos RDEPENDs on the virtual package virtual/chromeos-bsp, which
+exists for board overlays to override.  chromiumos-overlay provides a default
+version of virtual/chromeos-bsp which RDEPENDs on the empty package
+chromeos-base/chromeos-bsp-null.  Board overlays should provide a
+virtual/chromeos-bsp package that RDEPENDs on
+chromeos-base/chromeos-bsp-boardname, and a
+chromeos-base/chromeos-bsp-boardname package that RDEPENDs on any desired
+board-specific packages.
 
-    If src/overlays/overlay-<board> exists, it is used as as the primary board
-overlay. If there is no src/overlays/overlay-<board> but there is a
-src/private-overlays/overlay-<board>-private directory, it is used as the
-primary board overlay.
-
-    In order to be useful the primary overlay should also contain ebuilds for
-chromeos-base/board-devices. The board-devices ebuild is used to override the
-board-devices ebuild provided by the base chromiumos-overlay.
-
-    If src/overlays/overlay-<board> is the primary board overlay it should
-also contain a chromeos-base/board-devices-private ebuild. The
-board-devices-private ebuild should be a "null" ebuild that is provided so that
-a private overlay may override it.
+    A board overlay can also provide additional packages to install in dev
+builds only, via similar packages virtual/chromeos-bsp-dev and
+chromeos-base/chromeos-bsp-dev-boardname.  ChromiumOS dev builds install
+chromeos-base/chromeos-dev by default, which RDEPENDs on
+virtual/chromeos-bsp-dev.
