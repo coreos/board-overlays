@@ -95,3 +95,7 @@ builds only, via similar packages virtual/chromeos-bsp-dev and
 chromeos-base/chromeos-bsp-dev-boardname.  ChromiumOS dev builds install
 chromeos-base/chromeos-dev by default, which RDEPENDs on
 virtual/chromeos-bsp-dev.
+
+    Note that a board overlay cannot specify package-specific USE flags by
+using an RDEPEND with a use flag, such as section/package[useflag]; instead,
+add "section/package useflag" to package.use in a profile.
