@@ -8,7 +8,7 @@ EGIT_BRANCH="v3.2"
 
 # To move up to a new commit, you should update this and then bump the
 # symlink to a new rev.
-EGIT_COMMIT="0cb3e2327b555db9f946ef0638f011214a9be989"
+EGIT_COMMIT="db86a3b73e731bf679eb6a794a2a6a44e355c7e5"
 
 # This must be inherited *after* EGIT/CROS_WORKON variables defined
 inherit git cros-kernel2
