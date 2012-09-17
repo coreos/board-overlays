@@ -26,14 +26,15 @@ RDEPEND="
 
 src_install() {
 	# Install platform specific config file for power_manager
-	insinto "/usr/share/power_manager"
-	doins "${FILESDIR}/wakeup_input_device_names" || die "installation failed ($?)"
+	insinto "/usr/share/power_manager/board_specific"
+	doins "${FILESDIR}/wakeup_input_device_names" || die
+	doins "${FILESDIR}/low_battery_shutdown_percent" || die
+	doins "${FILESDIR}/low_battery_shutdown_time_s" || die
 
 	# Install platform specific usb device list for laptop mode tools
 	insinto "/etc/laptop-mode/conf.d/board-specific"
 	doins "${FILESDIR}/usb-autosuspend.conf" || die "installation failed ($?)"
 	doins "${FILESDIR}/cpufreq.conf" || die "installation failed ($?)"
-
 
 	if use snow; then
 		# Install platform specific config file for thermal monitoring
