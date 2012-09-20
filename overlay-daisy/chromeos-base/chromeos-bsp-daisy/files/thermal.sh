@@ -40,7 +40,12 @@ read_temp() {
     sensor="$1"
     if [[ -r $sensor ]] ; then
         # treat $1 as numeric and convert to C
-        let t=`cat $sensor`/1000
+        local raw
+        raw=`cat $sensor 2> /dev/null`
+        if [[ -z "$raw" ]] ; then
+            return 1
+        fi
+        let t=$raw/1000
 
         # valid CPU range is 25 to 125C. Give thermistor more range.
         if  [[ $t -lt 15 || $t -gt 140 ]] ; then
