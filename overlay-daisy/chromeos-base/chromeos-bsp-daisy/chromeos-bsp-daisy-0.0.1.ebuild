@@ -17,7 +17,6 @@ DEPEND=""
 RDEPEND="
 	!<chromeos-base/chromeos-bsp-daisy-private-0.0.1-r11
 	snow? ( chromeos-base/chromeos-init )
-	snow? ( chromeos-base/chromeos-touch-firmware-daisy )
 	samsung_serial? ( chromeos-base/serial-tty )
 	media-libs/media-rules
 	media-libs/mfc-fw
