@@ -99,3 +99,27 @@ virtual/chromeos-bsp-dev.
     Note that a board overlay cannot specify package-specific USE flags by
 using an RDEPEND with a use flag, such as section/package[useflag]; instead,
 add "section/package useflag" to package.use in a profile.
+
+
+PRIVATE HOST OVERLAYS
+---------------------
+
+    The host (non-cross-compiling) build environment will use the following
+overlay if it exists:
+
+    src/private-overlays/chromeos-overlay
+
+    This overlay contains private packages needed on the host system to compile
+target packages used in a private overlay.  Packages only needed on the target
+system should appear in a private board overlay.  The packages in a private
+host overlay should typically all appear in the dependency chain of
+chromeos-base/hard-host-depends so that the build process will install them on
+the host system at the appropriate time.  chromeos-base/hard-host-depends
+depends on the virtual package virtual/hard-host-depends-bsp to allow a private
+host overlay to extend the host dependencies; a private host overlay can
+provide a version 2 ebuild for virtual/hard-host-depends-bsp, and list any
+additional host dependencies in the RDEPEND of that package.
+
+    Like a board overlay, a private host overlay must include a layout.conf
+with "masters" set, so that the packages within that host overlay can reference
+eclasses from the parent overlays chromiumos-overlay or portage-stable.
