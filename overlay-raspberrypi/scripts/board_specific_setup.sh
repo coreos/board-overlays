@@ -11,10 +11,10 @@ install_hybrid_mbr() {
   locate_gpt
   local start_esp=$(partoffset "$1" 12)
   local num_esp_sectors=$(partsize "$1" 12)
-  sudo sfdisk "${1}" <<EOF
+  sudo sfdisk "$1" <<EOF
 unit: sectors
 
-disk1 : start=   $start_esp, size=    $num_esp_sectors, Id= c, bootable
+disk1 : start=   ${start_esp}, size=    ${num_esp_sectors}, Id= c, bootable
 disk2 : start=   1, size=    1, Id= ee
 EOF
 }
@@ -33,7 +33,6 @@ install_raspberrypi_bootloader() {
 
   info "Downloading/installing firmware"
   sudo wget "${git_url}/boot/arm240_start.elf" -O "${efi_dir}/start.elf"
-  sudo wget "${git_url}/boot/loader.bin" -O "${efi_dir}/loader.bin"
   sudo wget "${git_url}/boot/bootcode.bin" -O "${efi_dir}/bootcode.bin"
 
   info "Creating boot configuration files"

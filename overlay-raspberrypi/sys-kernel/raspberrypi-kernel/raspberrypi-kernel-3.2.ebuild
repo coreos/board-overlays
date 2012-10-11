@@ -8,7 +8,7 @@ EGIT_BRANCH="rpi-3.2.27"
 
 # To move up to a new commit, you should update this and then bump the
 # symlink to a new rev.
-EGIT_COMMIT="307d9fbb18900c17bc9deeb4020c5ed599053947"
+EGIT_COMMIT="f9506a194ad6a4afef06cb423286367ab787dee6"
 
 # This must be inherited *after* EGIT/CROS_WORKON variables defined
 inherit git cros-kernel2
@@ -20,14 +20,6 @@ DEPEND="!sys-kernel/chromeos-kernel-next
 	!sys-kernel/chromeos-kernel
 "
 RDEPEND="${DEPEND}"
-
-src_configure() {
-  cros-kernel2_src_configure
-
-  # TODO (lmcloughlin): We can drop this once upstream has this option enabled
-  echo "CONFIG_DEVTMPFS_MOUNT=y" >> "$(get_build_cfg)" || die
-  yes "" | kmake oldconfig
-}
 
 src_install() {
   dodir /lib/firmware
