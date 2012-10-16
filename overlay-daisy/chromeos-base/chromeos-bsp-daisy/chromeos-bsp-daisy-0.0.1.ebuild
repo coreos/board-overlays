@@ -27,9 +27,10 @@ RDEPEND="
 src_install() {
 	# Install platform specific config file for power_manager
 	insinto "/usr/share/power_manager/board_specific"
-	doins "${FILESDIR}/wakeup_input_device_names" || die
+	doins "${FILESDIR}/battery_poll_short_interval_ms" || die
 	doins "${FILESDIR}/low_battery_shutdown_percent" || die
 	doins "${FILESDIR}/low_battery_shutdown_time_s" || die
+	doins "${FILESDIR}/wakeup_input_device_names" || die
 
 	# Install platform specific usb device list for laptop mode tools
 	insinto "/etc/laptop-mode/conf.d/board-specific"
