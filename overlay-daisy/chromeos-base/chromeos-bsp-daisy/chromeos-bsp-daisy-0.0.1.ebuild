@@ -42,7 +42,7 @@ src_install() {
 		dosbin "${FILESDIR}/thermal.sh" || die "installation failed ($?)"
 		insinto "/etc/init/"
 		doins "${FILESDIR}/thermal.conf" || die "installation failed ($?)"
-		insinfo "/lib/udev/rules.d"
+		insinto "/lib/udev/rules.d"
 		doins "${FILESDIR}/50-rtc-max77686.rules" || die "installation failed ($?)"
 	fi
 }
