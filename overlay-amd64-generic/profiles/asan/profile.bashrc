@@ -9,5 +9,7 @@ case "${PN}" in
 	"chromeos-chrome")
 		export CC=clang
 		export CXX=clang++
+		# We want to be able to easily symbolize possible asan failure logs.
+                export KEEP_CHROME_DEBUG_SYMBOLS=1
 		;;
 esac
