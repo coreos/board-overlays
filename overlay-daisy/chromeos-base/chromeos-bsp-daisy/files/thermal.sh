@@ -150,6 +150,8 @@ while true; do
 
     if [[ $last_cpu_freq -ne $max_cpu_freq ]] ; then
         let last_cpu_freq=$max_cpu_freq
+        logger -t "$PROG" "Max CPU Freq set to $max_cpu_freq \
+(Celsius: $cpu_temp ${temps[@]})"
         set_max_cpu_freq $max_cpu_freq
     fi
 
