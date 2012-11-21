@@ -20,6 +20,7 @@ RDEPEND="
 	samsung_serial? ( chromeos-base/serial-tty )
 	media-libs/media-rules
 	media-libs/mfc-fw
+	sys-apps/daisydog
 	sys-boot/exynos-pre-boot
 	x11-drivers/xf86-video-armsoc
 "
