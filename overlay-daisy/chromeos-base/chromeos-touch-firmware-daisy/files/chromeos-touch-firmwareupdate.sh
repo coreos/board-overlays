@@ -8,6 +8,7 @@
 
 DEFINE_boolean 'force' ${FLAGS_FALSE} "Force update" 'f'
 DEFINE_boolean 'recovery' ${FLAGS_FALSE} "Recovery. Allows for rollback" 'r'
+DEFINE_boolean 'trial' ${FLAGS_FALSE} "Allow trial firmwares" 't'
 DEFINE_string 'device' '' "device name" 'd'
 DEFINE_string 'firmware_name' '' "firmware name (in /lib/firmware)" 'n'
 
@@ -33,6 +34,7 @@ trackpad_device_name="${FLAGS_device}"
 i2c_devices_path="/sys/bus/i2c/devices"
 trackpad_path=""
 update_needed=${FLAGS_FALSE}
+trial_selection_path="/var/cache/touch_trial"
 
 # Find trackpad path in i2c devices.
 for dev in "${i2c_devices_path}"/*/name; do
@@ -46,14 +48,40 @@ if [ -z "${trackpad_path}" ]; then
   die "${trackpad_device_name} not found on system. Aborting update."
 fi
 
-fw_link_name=${FLAGS_firmware_name:-${trackpad_device_name}.bin}
-case ${fw_link_name} in
-/*) fw_link_path=${fw_link_name} ;;
-*)  fw_link_path="/lib/firmware/${fw_link_name}" ;;
-esac
+default_fw_link_name=${FLAGS_firmware_name:-${trackpad_device_name}.bin}
+fw_link_name=${default_fw_link_name}
+
+if [ ${FLAGS_trial} -eq ${FLAGS_TRUE} ]; then
+  if [ ! -e "${trial_selection_path}/selection" ]; then
+    mkdir -p "${trial_selection_path}"
+    printf "${fw_link_name}" > "${trial_selection_path}/selection"
+    chown chronos "${trial_selection_path}/selection"
+  else
+    fw_link_name=$(cat "${trial_selection_path}/selection")
+  fi
+
+  found=${FLAGS_FALSE}
+  for fw in /lib/firmware/"${default_fw_link_name}"*; do
+    if [ "${fw##*/}" = "${fw_link_name}" ]; then
+      found=${FLAGS_TRUE}
+      break
+    fi
+  done
+
+  # Sanity check that selection is one of the file names in /lib/firmware
+  if [ ${found} -eq ${FLAGS_FALSE} ]; then
+    log_msg "Improper trial firmware name found. Falling back to default."
+    fw_link_name=${default_fw_link_name}
+    printf "${fw_link_name}" > "${trial_selection_path}/selection"
+  fi
+else
+  rm -rf "${trial_selection_path}"
+fi
+
+fw_link_path="/lib/firmware/${fw_link_name}"
 
 update_firmware() {
-  printf 1 > "$1/update_fw"
+  printf "${fw_link_name}" > "$1/update_fw"
   local ret=$?
   if [ ${ret} -ne 0 ]; then
     die "Error updating touch firmware. ${ret}"
