@@ -8,5 +8,5 @@ SLOT="0"
 KEYWORDS="arm"
 IUSE=""
 
-RDEPEND="|| ( media-libs/mali-drivers x11-drivers/opengles )"
+RDEPEND="media-libs/mali-drivers-bin"
 DEPEND=""
