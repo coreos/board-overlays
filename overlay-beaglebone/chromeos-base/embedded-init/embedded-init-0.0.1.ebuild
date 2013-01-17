@@ -48,11 +48,11 @@ disable_upstart() {
 }
 
 pkg_postinst() {
-	disable_upstart "ui.conf"
-	disable_upstart "power.conf"
-	disable_upstart "powerd.conf"
-	disable_upstart "powerm.conf"
 	disable_upstart "disable_echo.conf"
+	disable_upstart "laptop-mode-boot.conf"
+	disable_upstart "laptop-mode-resume.conf"
+	disable_upstart "powerd.conf"
+	disable_upstart "ui.conf"
 
 	modify_upstart "boot-complete.conf" "started boot-services"
 	modify_upstart "update-engine.conf" "starting failsafe"
