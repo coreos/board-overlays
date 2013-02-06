@@ -1,2 +1,0 @@
-# Calibrate the light sensor when the isl29018 driver is installed.
-ACTION=="add", SUBSYSTEM=="drivers", KERNEL=="isl29018", RUN+="light-sensor-set-multiplier.sh"

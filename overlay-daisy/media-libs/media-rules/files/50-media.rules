@@ -1,6 +1,0 @@
-ATTR{name}=="s5p-mfc-dec", SYMLINK+="mfc-dec"
-ATTR{name}=="s5p-mfc-enc", SYMLINK+="mfc-enc"
-ATTR{name}=="exynos-gsc.0*", SYMLINK+="gsc0"
-ATTR{name}=="exynos-gsc.1*", SYMLINK+="gsc1"
-ATTR{name}=="exynos-gsc.2*", SYMLINK+="gsc2"
-ATTR{name}=="exynos-gsc.3*", SYMLINK+="gsc3"

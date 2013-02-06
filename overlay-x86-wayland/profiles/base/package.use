@@ -1,4 +1,0 @@
-media-libs/mesa		gbm gles2 wayland
-x11-base/xorg-server	vanilla
-x11-libs/gdk-pixbuf	-introspection
-x11-misc/wayland-demos	-svg -poppler

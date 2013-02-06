@@ -1,1 +1,0 @@
-SUBSYSTEM=="rtc", DRIVERS=="rtc-max77686", SYMLINK+="rtc"

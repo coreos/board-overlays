@@ -1,4 +1,0 @@
-<x11-base/xorg-server-1.12
-<x11-base/xorg-drivers-1.12
-<x11-drivers/tegra-drivers-12
-<x11-misc/xkeyboard-config-2.4.1

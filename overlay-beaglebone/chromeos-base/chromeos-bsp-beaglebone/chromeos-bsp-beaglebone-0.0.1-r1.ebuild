@@ -1,1 +1,0 @@
-chromeos-bsp-beaglebone-0.0.1.ebuild

@@ -1,1 +1,0 @@
-waluigi-kernel-3.0.ebuild
